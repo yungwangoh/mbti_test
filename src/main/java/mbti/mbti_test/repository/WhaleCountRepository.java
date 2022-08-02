@@ -17,4 +17,6 @@ public interface WhaleCountRepository {
     List<WhaleCount> findWhaleName(String name);
 
     List<WhaleCount> findAll();
+
+    void initWhaleMethod();
 }
