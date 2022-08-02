@@ -10,4 +10,5 @@ public interface MemberService {
     Long join(Member member);
     Member findOne(Long memberId);
     List<Member> findMembers();
+
 }
