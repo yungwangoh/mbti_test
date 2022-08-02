@@ -1,5 +1,6 @@
 package mbti.mbti_test.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,7 @@ public class Result {
     @Column(name = "result_id")
     private Long id;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime testTime; // 테스트 한 시각
 
     @ManyToOne(fetch = FetchType.LAZY)

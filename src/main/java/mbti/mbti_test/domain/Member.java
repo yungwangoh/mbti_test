@@ -42,4 +42,11 @@ public class Member {
         this.email = email;
         this.memberStatus = memberStatus;
     }
+
+    public Member(String account, String pwd, Address address, String email) {
+        this.account = account;
+        this.pwd = pwd;
+        this.address = address;
+        this.email = email;
+    }
 }

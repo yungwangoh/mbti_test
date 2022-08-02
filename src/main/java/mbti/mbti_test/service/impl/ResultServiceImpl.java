@@ -1,10 +1,7 @@
 package mbti.mbti_test.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import mbti.mbti_test.domain.MbtiList;
-import mbti.mbti_test.domain.Member;
-import mbti.mbti_test.domain.Result;
-import mbti.mbti_test.domain.WhaleCount;
+import mbti.mbti_test.domain.*;
 import mbti.mbti_test.repository.MemberRepository;
 import mbti.mbti_test.repository.ResultRepository;
 import mbti.mbti_test.repository.WhaleCountRepository;
@@ -42,4 +39,10 @@ public class ResultServiceImpl implements ResultService {
     public double userWhaleShare(double Share) { // 유저들이 선택한 고래의 점유율
         return 0;
     }
+
+    @Override
+    public List<Result> findWhaleResults(ResultSearch resultSearch) {
+        return resultRepository.findAllByWhale(resultSearch);
+    }
+
 }
