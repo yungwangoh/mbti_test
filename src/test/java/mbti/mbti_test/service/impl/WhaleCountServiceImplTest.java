@@ -8,9 +8,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -56,5 +59,16 @@ class WhaleCountServiceImplTest {
 
         int count4 = whaleCount1.getCount();
         System.out.println("ID = " + whaleId1 + " count4 = " + count4);
+    }
+
+    @Test
+    @Rollback(value = false)
+    public void 고래16마리초기화() {
+        whaleCountRepository.initWhaleMethod();
+
+        List<WhaleCount> findWhales = whaleCountRepository.findAll();
+        findWhales.forEach(whaleCount -> {
+            System.out.println("whaleCount.name = " + whaleCount.getName());
+        });
     }
 }
