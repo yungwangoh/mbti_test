@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
-
+//테스트 주석 달았습니다.
     @Id @GeneratedValue
     @Column(name = "member_id")
     private Long id;
