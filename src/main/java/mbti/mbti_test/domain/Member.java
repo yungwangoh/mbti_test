@@ -1,5 +1,6 @@
 package mbti.mbti_test.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +27,12 @@ public class Member {
     private Address address;
 
     private String email;
-    private LocalDateTime localDateTime;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime createDateTime;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime updateDateTime;
 
     @Enumerated(value = EnumType.STRING)
     private MemberStatus memberStatus; // 유저와 비유저 [USER, NONUSER]
@@ -41,6 +47,8 @@ public class Member {
         this.address = address;
         this.email = email;
         this.memberStatus = memberStatus;
+        this.createDateTime = LocalDateTime.now();
+        this.updateDateTime = LocalDateTime.now();
     }
 
     public Member(String account, String pwd, Address address, String email) {
@@ -48,5 +56,6 @@ public class Member {
         this.pwd = pwd;
         this.address = address;
         this.email = email;
+        this.updateDateTime = LocalDateTime.now();
     }
 }
