@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
-// ㅎㅇ
+// ㅎㅇ11
     @Id @GeneratedValue
     @Column(name = "member_id")
     private Long id;
