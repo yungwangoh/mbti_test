@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static mbti.mbti_test.domain.MbtiList.*;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -45,4 +47,38 @@ public class ResultServiceImpl implements ResultService {
         return resultRepository.findAllByWhale(resultSearch);
     }
 
+    @Override
+    public MbtiList mbtiChangeEnum(String mbti) {    // 문자열로 들어론 mbti를 enum type 으로 반환
+                                                    // 없을 경우 null을 반환.
+        if(mbti == "ISTJ")
+            return ISTJ;
+        else if (mbti == "ISFJ") {
+            return ISFJ;
+        } else if (mbti == "INFJ") {
+            return INFJ;
+        } else if (mbti == "INTJ") {
+            return INTJ;
+        } else if (mbti == "ISTP") {
+            return ISTP;
+        } else if (mbti == "ISFP") {
+            return ISFP;
+        } else if (mbti == "INFP") {
+            return INFP;
+        } else if (mbti == "INTP") {
+            return INTP;
+        } else if (mbti == "ESTP") {
+            return ESTP;
+        } else if (mbti == "ESFP") {
+            return ESFP;
+        } else if (mbti == "ENFP") {
+            return ENFP;
+        } else if (mbti == "ENTP") {
+            return ENTP;
+        } else if (mbti == "ESTJ") {
+            return ESTJ;
+        } else if (mbti == "ESFJ") {
+            return ESFJ;
+        }
+        return null;
+    }
 }
