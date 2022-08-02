@@ -14,9 +14,11 @@ public interface WhaleCountRepository {
 
     List<WhaleCount> findMinOne();
 
-    List<WhaleCount> findWhaleName(String name);
+    WhaleCount findWhaleName(String name);
 
     List<WhaleCount> findAll();
 
     void initWhaleMethod();
+
+    List<WhaleCount> sharePoint();
 }

@@ -28,6 +28,10 @@ public class WhaleCount {
         this.count = 0;
     }
 
+    public void setCount(int count) {
+        this.count = count;
+    }
+
     // 선택한 고래 카운트
     public void whaleCountValue() {
         this.count++;

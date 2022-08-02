@@ -54,4 +54,6 @@ public class WhaleAlgorithm {
     public String mbtiCombination(String ie, String sn, String tf, String pj) {
         return ie + sn + tf + pj;
     }
+
+    //점유율 계산, 짝꿍조합(ISTP - ESFP),
 }

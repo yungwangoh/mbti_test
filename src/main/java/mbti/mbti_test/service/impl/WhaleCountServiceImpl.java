@@ -29,4 +29,6 @@ public class WhaleCountServiceImpl implements WhaleCountService {
     public List<WhaleCount> findAll() {
         return whaleCountRepository.findAll();
     }
+
+
 }

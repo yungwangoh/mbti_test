@@ -16,6 +16,11 @@ public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
 
+    /**
+     * 회원가입
+     * @param member
+     * @return
+     */
     @Override
     @Transactional
     public Long join(Member member) {
@@ -29,11 +34,18 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findOne(memberId);
     }
 
+    /**
+     * 전체 회원 조회
+     * @return
+     */
     @Override
     public List<Member> findMembers() {
         return memberRepository.findAll();
     }
 
+    /**
+     * 회원검증
+     */
     private void userValidation(Member member) {
         List<Member> findByName = memberRepository.findByName(member.getName());
         if(!findByName.isEmpty()) {

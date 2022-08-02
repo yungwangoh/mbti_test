@@ -1,9 +1,8 @@
 package mbti.mbti_test.service;
 
-import mbti.mbti_test.domain.MbtiList;
-import mbti.mbti_test.domain.Member;
-import mbti.mbti_test.domain.Result;
-import mbti.mbti_test.domain.WhaleCount;
+import mbti.mbti_test.domain.*;
+
+import java.util.List;
 
 public interface ResultService {
 
@@ -12,4 +11,6 @@ public interface ResultService {
     String ResultWhale(Long resultId);
 
     double userWhaleShare(double Share);
+
+    List<Result> findWhaleResults(ResultSearch resultSearch);
 }
