@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@Transactional
+@Transactional(readOnly = true)
 class ResultServiceImplTest {
 
     @Autowired MemberService memberService;
@@ -28,6 +28,7 @@ class ResultServiceImplTest {
     @Autowired EntityManager em;
 
     @Test
+    @Transactional
     @Rollback(value = false)
     public void 유저가고른고래의수() {
         whaleCountRepository.initWhaleMethod();
@@ -44,6 +45,7 @@ class ResultServiceImplTest {
         Address address1 = getAddress("인천시", "문화로", "123");
         Address address2 = getAddress("서울시", "강남구", "일원1동");
         Address address3 = getAddress("성남시", "분당구", "정자2동");
+        Address address4 = getAddress("대구광역시", "성동구", "동동1동");
 
         Member member1 = createMember("윤광오", "qkfks1234", "1234",
                 address1, "swager253@naver.com", MemberStatus.USER);
@@ -51,6 +53,8 @@ class ResultServiceImplTest {
                 address2, "gkdbssla97@naver.com", MemberStatus.NONUSER);
         Member member3 = createMember("김경민", "rlarudals123", "4321",
                 address3, "kkm1112@naver.com", MemberStatus.USER);
+        Member member4 = createMember("최용재", "chldydwo321", "654321",
+                address4, "chj3331@naver.com", MemberStatus.NONUSER);
 
         WhaleCount whaleName = whaleCountRepository.findWhaleName(MbtiList.ENFJ.whaleNameMethod());
         Result result = Result.createResult(member1, MbtiList.ENFJ, whaleName);
@@ -59,13 +63,17 @@ class ResultServiceImplTest {
         Result result1 = Result.createResult(member2, MbtiList.ENFJ, whaleName1);
 
         WhaleCount whaleName3 = whaleCountRepository.findWhaleName(MbtiList.ENFP.whaleNameMethod());
-        Result result3 = Result.createResult(member2, MbtiList.ENFP, whaleName3);
+        Result result3 = Result.createResult(member3, MbtiList.ENFP, whaleName3);
+
+        WhaleCount whaleName4 = whaleCountRepository.findWhaleName(MbtiList.ISFJ.whaleNameMethod());
+        Result result4 = Result.createResult(member4, MbtiList.ISFJ, whaleName4);
 
         WhaleCount one = whaleCountRepository.findOne(whaleName1.getId());
         one.getCount();
         resultService.ResultJoin(result);
         resultService.ResultJoin(result1);
         resultService.ResultJoin(result3);
+        resultService.ResultJoin(result4);
     }
 
     private Address getAddress(String city, String street, String zipcode) {

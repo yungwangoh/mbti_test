@@ -80,15 +80,17 @@ public class WhaleCountRepositoryImpl implements WhaleCountRepository {
             }
         };
 
-        int value = 100;
+//        int value = 100;
         for (WhaleCount whaleCount : whaleCounts) {
-            for(int i = 10; i < value; i++)
-                whaleCount.whaleCountValue();
+//            for(int i = 10; i < value; i++)
+            //  whaleCount.whaleCountValue();
             save(whaleCount);
-            value--;
+//            value--;
+//        }
+
+            // Max_Value
         }
-
-        // Max_Value
     }
-
 }
+
+
