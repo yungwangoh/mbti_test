@@ -78,7 +78,11 @@ public class ResultServiceImpl implements ResultService {
             return ESTJ;
         } else if (mbti == "ESFJ") {
             return ESFJ;
-        }
-        return null;
+        } else if (mbti == "ENFJ") { // 여기 mbti가 2개 빠졌었는데 추가했음.
+            return ENFJ;
+        } else if (mbti == "ENTJ") {
+            return ENTJ;
+        } else
+            return null;
     }
 }

@@ -1,10 +1,12 @@
 package mbti.mbti_test.service.impl;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // 여기 추가W
 public class WhaleAlgorithm {
 
     private int iCount;
