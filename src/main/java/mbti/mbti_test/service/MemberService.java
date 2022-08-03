@@ -1,5 +1,6 @@
 package mbti.mbti_test.service;
 
+import mbti.mbti_test.domain.Address;
 import mbti.mbti_test.domain.Member;
 import mbti.mbti_test.domain.WhaleCount;
 
@@ -10,5 +11,8 @@ public interface MemberService {
     Long join(Member member);
     Member findOne(Long memberId);
     List<Member> findMembers();
+
+    //0803 hayoon
+    void updateMember(Long id, String account, String pwd, Address address, String email);
 
 }

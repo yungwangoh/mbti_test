@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter
+@Getter @Setter //@Setter 수정/삭제요망
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
 
@@ -23,6 +24,7 @@ public class Member {
     private String name;
     private String account; //회원 ACCOUNT
     private String pwd; //회원 PWD
+
     @Embedded
     private Address address;
 
@@ -58,4 +60,5 @@ public class Member {
         this.email = email;
         this.updateDateTime = LocalDateTime.now();
     }
+
 }
