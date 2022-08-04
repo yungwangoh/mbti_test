@@ -58,10 +58,10 @@ public class MemberApiController {
     @PutMapping("/api/v2/members/{id}")
     public UpdateMemberResponse updateMemberV2(@PathVariable("id") Long id,
                                                @RequestBody @Valid UpdateMemberDto updateMemberDto) {
-        memberService.updateMember(id, updateMemberDto.getAccount(),
-                updateMemberDto.getPwd(), updateMemberDto.getAddress(), updateMemberDto.getEmail());
         Member findMember = memberService.findOne(id);
-        return new UpdateMemberResponse(findMember.getId(), findMember.getEmail(),
+        findMember.updateMember(updateMemberDto.getAccount(), updateMemberDto.getPwd(), updateMemberDto.getAddress(),
+                updateMemberDto.getEmail(), updateMemberDto.getUpdateDateTime());
+        return new UpdateMemberResponse(findMember.getEmail(),
                 findMember.getAddress(), findMember.getAccount(), findMember.getPwd(),
                 findMember.getUpdateDateTime());
     }
@@ -77,7 +77,6 @@ public class MemberApiController {
     @Data
     @AllArgsConstructor
     static class UpdateMemberResponse {
-        private Long updateId;
         private String email;
         private Address address;
         private String account;

@@ -6,7 +6,7 @@ import mbti.mbti_test.repository.WhaleCountRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Repository
@@ -58,39 +58,38 @@ public class WhaleCountRepositoryImpl implements WhaleCountRepository {
     }
 
     @Override
-    public void initWhaleMethod() {
-        List<WhaleCount> whaleCounts = new ArrayList<>() {
-            {
-                add(new WhaleCount("일각고래", 0));
-                add(new WhaleCount("상괭이", 0));
-                add(new WhaleCount("고양이고래", 0));
-                add(new WhaleCount("병코돌고래", 0));
-                add(new WhaleCount("대왕고래", 0));
-                add(new WhaleCount("북극고래", 0));
-                add(new WhaleCount("남방큰돌고래", 0));
-                add(new WhaleCount("벨루가", 0));
-                add(new WhaleCount("민부리고래", 0));
-                add(new WhaleCount("밍크고래", 0));
-                add(new WhaleCount("범고래", 0));
-                add(new WhaleCount("남방참고래", 0));
-                add(new WhaleCount("귀신고래", 0));
-                add(new WhaleCount("항유고래", 0));
-                add(new WhaleCount("낫골고래", 0));
-                add(new WhaleCount("혹등고래", 0));
-            }
-        };
+    public List<WhaleCount> initWhaleMethod() {
+        List<WhaleCount> whaleCounts = Arrays.asList(
 
-//        int value = 100;
+                new WhaleCount("일각고래", 0),
+                new WhaleCount("상괭이", 0),
+                new WhaleCount("고양이고래", 0),
+                new WhaleCount("병코돌고래", 0),
+                new WhaleCount("대왕고래", 0),
+                new WhaleCount("북극고래", 0),
+                new WhaleCount("남방큰돌고래", 0),
+                new WhaleCount("벨루가", 0),
+                new WhaleCount("민부리고래", 0),
+                new WhaleCount("밍크고래", 0),
+                new WhaleCount("범고래", 0),
+                new WhaleCount("남방참고래", 0),
+                new WhaleCount("귀신고래", 0),
+                new WhaleCount("항유고래", 0),
+                new WhaleCount("낫골고래", 0),
+                new WhaleCount("혹등고래", 0)
+        );
+
+        int value = 100, sum = 0;
         for (WhaleCount whaleCount : whaleCounts) {
-//            for(int i = 10; i < value; i++)
-            //  whaleCount.whaleCountValue();
+            for (int i = 10; i < value; i++)
+                whaleCount.whaleCountValue();
             save(whaleCount);
-//            value--;
-//        }
-
-            // Max_Value
+            value--;
         }
+        return whaleCounts;
+        // Max_Value
     }
 }
+
 
 

@@ -60,37 +60,40 @@ public class ResultServiceImpl implements ResultService {
     @Override
     public MbtiList mbtiChangeEnum(String mbti) {    // 문자열로 들어론 mbti를 enum type 으로 반환
                                                     // 없을 경우 null을 반환.
-        if(mbti == "ISTJ")
+
+        // 0804 Hayoon
+        // 주소값 비교(==)와 값 비교(equals) 중 Int, boolean을 제외하고는 모두 equals()로 판별
+        if(mbti.equals("ISTJ"))
             return ISTJ;
-        else if (mbti == "ISFJ") {
+        else if (mbti.equals("ISFJ")) {
             return ISFJ;
-        } else if (mbti == "INFJ") {
+        } else if (mbti.equals("INFJ")) {
             return INFJ;
-        } else if (mbti == "INTJ") {
+        } else if (mbti.equals("INTJ")) {
             return INTJ;
-        } else if (mbti == "ISTP") {
+        } else if (mbti.equals("ISTP")) {
             return ISTP;
-        } else if (mbti == "ISFP") {
+        } else if (mbti.equals("ISFP")) {
             return ISFP;
-        } else if (mbti == "INFP") {
+        } else if (mbti.equals("INFP")) {
             return INFP;
-        } else if (mbti == "INTP") {
+        } else if (mbti.equals("INTP")) {
             return INTP;
-        } else if (mbti == "ESTP") {
+        } else if (mbti.equals("ESTP")) {
             return ESTP;
-        } else if (mbti == "ESFP") {
+        } else if (mbti.equals("ESFP")) {
             return ESFP;
-        } else if (mbti == "ENFP") {
+        } else if (mbti.equals("ENFP")) {
             return ENFP;
-        } else if (mbti == "ENTP") {
+        } else if (mbti.equals("ENTP")) {
             return ENTP;
-        } else if (mbti == "ESTJ") {
+        } else if (mbti.equals("ESTJ")) {
             return ESTJ;
-        } else if (mbti == "ESFJ") {
+        } else if (mbti.equals("ESFJ")) {
             return ESFJ;
-        } else if (mbti == "ENFJ") { // 여기 mbti가 2개 빠졌었는데 추가했음.
+        } else if (mbti.equals("ENFJ")) { // 여기 mbti가 2개 빠졌었는데 추가했음.
             return ENFJ;
-        } else if (mbti == "ENTJ") {
+        } else if (mbti.equals("ENTJ")) {
             return ENTJ;
         } else
             return null;

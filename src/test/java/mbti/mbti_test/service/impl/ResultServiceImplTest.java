@@ -29,7 +29,7 @@ class ResultServiceImplTest {
 
     @Test
     @Transactional
-    @Rollback(value = false)
+    //@Rollback(value = false)
     public void 유저가고른고래의수() {
         whaleCountRepository.initWhaleMethod();
         createMembers();
