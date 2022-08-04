@@ -1,6 +1,7 @@
 package mbti.mbti_test.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ public class Result {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
+    @JsonIgnore // 양방향 매핑때 추가 해야함 안그러면 무한루프에 빠짐
     private Member member;
 
     @Enumerated(EnumType.STRING)

@@ -16,14 +16,14 @@ public class CreateResultDto {
     private Long resultId;
     private LocalDateTime resultDate;
     private MbtiList mbtiList;
-    private CreateMemberDto member;
-    private CreateWhaleCountDto whaleCount;
+    private Member member;
+    private WhaleCount whaleCount;
 
     public CreateResultDto(Result result) {
         this.resultId = result.getId();
         this.resultDate = result.getTestTime();
         this.mbtiList = result.getMbtiList();
-        this.member = new CreateMemberDto(result.getMember());
-        this.whaleCount = new CreateWhaleCountDto(result.getWhaleCount());
+        this.member = result.getMember();
+        this.whaleCount = result.getWhaleCount();
     }
 }

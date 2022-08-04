@@ -3,11 +3,19 @@ package mbti.mbti_test.service.impl;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import mbti.mbti_test.domain.WhaleCount;
+import mbti.mbti_test.repository.WhaleCountRepository;
+import mbti.mbti_test.service.WhaleCountService;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
+import java.util.List;
+
 @Service
-@NoArgsConstructor(access = AccessLevel.PROTECTED) // 여기 추가W
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // 여기 추가
 public class WhaleAlgorithm {
+
+    private WhaleCountService whaleCountService;
 
     private int iCount;
     private int eCount;
@@ -57,5 +65,32 @@ public class WhaleAlgorithm {
         return ie + sn + tf + pj;
     }
 
-    //점유율 계산, 짝꿍조합(ISTP - ESFP),
+    //0804 Hayoon
+    //점유율 계산
+    //모든 고래의 COUNT가 0일경우 INFINITY 발생
+    public void AllSharePoints(List<WhaleCount> whaleCountList) {
+        int sum = 0;
+        for (WhaleCount count : whaleCountList) {
+            sum += count.getCount();
+        }
+        for (WhaleCount whaleCount : whaleCountList) {
+            int point = whaleCount.getCount();
+            //double share = Math.round((point * 100.0) / sum);
+            double share = (point * 100.0) / sum;
+
+            DecimalFormat df = new DecimalFormat("0.00");
+            //DecimalFormat df = new DecimalFormat("#.##");
+            // 0.00 과 #.## 모두 가능하나 둘의 차이점은 만약에 1.1일 경우
+            // 0.00 은 나머지 0의 자리를 절삭해 1.1만 출력하지만
+            //#.##은 0을 절삭하지 않아
+            // 1.10을 출력한다.
+            String result = df.format(share);
+            //역시 리턴값이 String이기 때문에 String 변수에 담아주면 된다.
+            //Double.parseDouble(Double)로 String->Double 자료형변환
+            whaleCount.setSharePoint(Double.parseDouble(result));
+            //whaleCountService.whaleJoin(whaleCount);
+        }
+    }
+    //짝꿍조합(ISTP - ESFP),
 }
+
