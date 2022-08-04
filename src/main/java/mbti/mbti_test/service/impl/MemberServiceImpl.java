@@ -44,19 +44,6 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findAll();
     }
 
-    //0803 hayoon Setter <수정요망>
-    @Override
-    @Transactional
-    public void updateMember(Long id, String account, String pwd, Address address, String email) {
-        Member member = memberRepository.findOne(id); //영속성 상태
-        member.setAccount(account);
-        member.setPwd(pwd);
-        member.setAddress(address);
-        member.setEmail(email);
-
-        //회원일 경우-> 테스트 결과지 회원상태로 수정 후 공유가능?
-        //result.setMemberStatus(MemberStatus.MEMBER);
-    }
 
     /**
      * 회원검증

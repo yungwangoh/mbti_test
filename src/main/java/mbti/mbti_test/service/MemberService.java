@@ -12,7 +12,4 @@ public interface MemberService {
     Member findOne(Long memberId);
     List<Member> findMembers();
 
-    //0803 hayoon
-    void updateMember(Long id, String account, String pwd, Address address, String email);
-
 }

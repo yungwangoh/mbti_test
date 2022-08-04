@@ -19,21 +19,17 @@ public class UpdateMemberDto {
     @NotEmpty(message = "비밀번호는 필수입니다.")
     private String pwd;
 
-    private Long creatorId;
-    private LocalDateTime createdDateTime;
-    //private String updateId;
-    //private String updateDateTime;
+    private LocalDateTime updateDateTime;
     //private List<MemberFileDto> fileList;
 
 
     public UpdateMemberDto(String email, Address address,
                            String account, String pwd, Long creatorId,
-                           LocalDateTime createdDateTime) {
+                           LocalDateTime updateDateTime) {
         this.email = email;
         this.address = address;
         this.account = account;
         this.pwd = pwd;
-        this.creatorId = creatorId;
-        this.createdDateTime = createdDateTime;
+        this.updateDateTime = updateDateTime;
     }
 }

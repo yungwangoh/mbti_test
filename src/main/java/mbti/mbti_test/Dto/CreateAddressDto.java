@@ -6,8 +6,7 @@ import lombok.Setter;
 import mbti.mbti_test.domain.Address;
 
 @Data
-@Getter @Setter
-public class CreateAddressDto { // AddressDto 생성 -> createMemberDto 참 0804
+public class CreateAddressDto {
 
     private String city;
     private String street;

@@ -18,7 +18,7 @@ public interface WhaleCountRepository {
 
     List<WhaleCount> findAll();
 
-    void initWhaleMethod();
+    List<WhaleCount> initWhaleMethod();
 
     List<WhaleCount> sharePoint();
 }
