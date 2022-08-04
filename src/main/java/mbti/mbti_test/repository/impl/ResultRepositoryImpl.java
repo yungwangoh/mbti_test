@@ -33,6 +33,14 @@ public class ResultRepositoryImpl implements ResultRepository {
     }
 
     @Override
+    public List<Result> findWithMemberWhaleRepo() { // fetch join 최적화 메서드
+        return em.createQuery("select r from Result r" +
+                " join fetch r.member m" +
+                " join fetch r.whaleCount w", Result.class)
+                .getResultList();
+    }
+
+    @Override
     public List<Result> findAllByWhale(ResultSearch resultSearch) {
         //language = JPAQL
         String jpql = "select r From Result r join r.mbtiList m";

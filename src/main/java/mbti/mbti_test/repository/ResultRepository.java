@@ -13,4 +13,5 @@ public interface ResultRepository {
 
     List<Result> findAllByWhale(ResultSearch resultSearch);
 
+    List<Result> findWithMemberWhaleRepo(); // fetch join 최적화 메서드
 }
