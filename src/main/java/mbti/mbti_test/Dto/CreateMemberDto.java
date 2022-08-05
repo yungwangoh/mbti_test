@@ -19,6 +19,8 @@ import java.time.LocalDateTime;
 @Data
 public class CreateMemberDto {
 
+    private Long id; // 0805 ygo 추가 dto는 id 추가해도됨.
+
     @NotEmpty(message = "회원 이름은 필수입니다.")
     private String name;
 
@@ -56,7 +58,8 @@ public class CreateMemberDto {
         this.updateDateTime = createDateTime;
     }
 
-    public CreateMemberDto(Member member) { // createResultDto에 쓰일 CreateMemberDto 생성 0804.
+    public CreateMemberDto(Member member) { // createResultDto에 쓰일 CreateMemberDto 생성 0804. 0805 ygo id 추가
+        this.id = member.getId();
         this.name = member.getName();
         this.email = member.getEmail();
         this.address = member.getAddress();

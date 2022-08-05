@@ -10,5 +10,13 @@ public interface WhaleCountService {
 
     WhaleCount findOne(Long whaleId);
 
+    WhaleCount findWhaleNameMbti(String WhaleName);
+
+    List<WhaleCount> whaleSortDescend();
+
+    List<WhaleCount> maxWhaleNameShare();
+
+    List<WhaleCount> minWhaleNameShare();
+
     List<WhaleCount> findAll();
 }

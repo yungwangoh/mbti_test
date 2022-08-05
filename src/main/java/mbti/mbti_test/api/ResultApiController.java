@@ -9,6 +9,7 @@ import mbti.mbti_test.Dto.CreateWhaleCountDto;
 import mbti.mbti_test.domain.MbtiList;
 import mbti.mbti_test.domain.Member;
 import mbti.mbti_test.domain.Result;
+import mbti.mbti_test.domain.WhaleCount;
 import mbti.mbti_test.repository.ResultRepository;
 import mbti.mbti_test.service.MemberService;
 import mbti.mbti_test.service.ResultService;
@@ -27,7 +28,9 @@ import static java.util.stream.Collectors.*;
 @RequiredArgsConstructor
 public class ResultApiController {
 
+    private final MemberService memberService;
     private final ResultService resultService;
+    private final WhaleCountService whaleCountService;
 
     @GetMapping("/api/v2/result")
     public List<CreateResultDto> resultV2() {
@@ -66,9 +69,30 @@ public class ResultApiController {
         return resultService.mbtiChangeEnum(whaleAlgorithm.mbtiCombination(icString, snString, tfString, pjString));
     }
 
+    @GetMapping("/api/v3/user-results")
+    public List<CreateWhaleCountDto> userResult(@RequestParam("memberId") Long memberId) {
+
+        List<WhaleCount> whaleCounts = new ArrayList<>();
+        List<Result> memberResultService = resultService.findMemberResultService(memberId);
+
+        for(Result result : memberResultService) {
+            whaleCounts.add(result.getWhaleCount());
+        }
+
+        List<CreateWhaleCountDto> whaleCountDtos = whaleCounts.stream()
+                .map(whaleCount -> new CreateWhaleCountDto(whaleCount))
+                .collect(toList());
+
+        return whaleCountDtos;
+    }
+
     @PostMapping("/api/create/result")
-    public CreateResultResponse saveResultV2(@RequestBody @Valid CreateResultDto createResultDto) {
-        Result result = Result.createResult(createResultDto.getMember(), createResultDto.getMbtiList(), createResultDto.getWhaleCount());
+    public CreateResultResponse saveResultV2(@RequestBody @Valid CreateMemberDto createMemberDto,
+                                             @RequestBody @Valid MbtiList mbtiList) {
+
+        Member findMember = memberService.findOne(createMemberDto.getId());
+        WhaleCount whaleNameMbti = whaleCountService.findWhaleNameMbti(mbtiList.whaleNameMethod());
+        Result result = Result.createResult(findMember, mbtiList, whaleNameMbti);
         Long crateResultId = resultService.ResultJoin(result);
 
         return new CreateResultResponse(crateResultId);

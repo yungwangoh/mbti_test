@@ -33,6 +33,15 @@ public class ResultRepositoryImpl implements ResultRepository {
     }
 
     @Override
+    public List<Result> findMemberResult(Long memberId) { // 페이징 처리? -> 최적화...
+        return em.createQuery("select r from Result r where r.member.id = :memberId", Result.class)
+                .setFirstResult(0)
+                .setMaxResults(10)
+                .setParameter("memberId", memberId)
+                .getResultList();
+    }
+
+    @Override
     public List<Result> findWithMemberWhaleRepo() { // fetch join 최적화 메서드
         return em.createQuery("select r from Result r" +
                 " join fetch r.member m" +

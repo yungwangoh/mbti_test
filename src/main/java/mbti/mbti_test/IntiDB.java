@@ -68,12 +68,14 @@ public class IntiDB {
             WhaleCount whaleName4 = whaleCountRepository.findWhaleName(MbtiList.ISFJ.whaleNameMethod());
             Result result4 = Result.createResult(member4, MbtiList.ISFJ, whaleName4);
 
-            WhaleCount one = whaleCountRepository.findOne(whaleName1.getId());
-            one.getCount();
+            WhaleCount whaleName5 = whaleCountRepository.findWhaleName(MbtiList.ENFJ.whaleNameMethod());
+            Result result5 = Result.createResult(member1, MbtiList.ENFJ, whaleName5);
+
             resultService.ResultJoin(result);
             resultService.ResultJoin(result1);
             resultService.ResultJoin(result3);
             resultService.ResultJoin(result4);
+            resultService.ResultJoin(result5);
 
         }
 

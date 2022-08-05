@@ -11,6 +11,8 @@ public interface ResultRepository {
     Result findOne(Long id);
     List<Result> findAll();
 
+    List<Result> findMemberResult(Long memberId);
+
     List<Result> findAllByWhale(ResultSearch resultSearch);
 
     List<Result> findWithMemberWhaleRepo(); // fetch join 최적화 메서드

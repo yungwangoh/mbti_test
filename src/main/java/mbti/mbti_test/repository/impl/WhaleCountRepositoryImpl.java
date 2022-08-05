@@ -25,16 +25,15 @@ public class WhaleCountRepositoryImpl implements WhaleCountRepository {
         return em.find(WhaleCount.class, id);
     }
 
-
     @Override
     public List<WhaleCount> findMaxOne() {
-        return em.createQuery("select MAX (w.count) from WhaleCount w", WhaleCount.class)
+        return em.createQuery("select max (w.count) from WhaleCount w", WhaleCount.class)
                 .getResultList();
     }
 
     @Override
     public List<WhaleCount> findMinOne() {
-        return em.createQuery("select MIN (w.count) from WhaleCount w", WhaleCount.class)
+        return em.createQuery("select min (w.count) from WhaleCount w", WhaleCount.class)
                 .getResultList();
     }
 

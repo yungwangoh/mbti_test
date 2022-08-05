@@ -44,6 +44,10 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findAll();
     }
 
+    @Override // 0805 생성
+    public List<Member> findName(String userName) {
+        return memberRepository.findByName(userName);
+    }
 
     /**
      * 회원검증

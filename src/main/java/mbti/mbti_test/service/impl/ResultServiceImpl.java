@@ -58,6 +58,11 @@ public class ResultServiceImpl implements ResultService {
     }
 
     @Override
+    public List<Result> findMemberResultService(Long memberId) {
+        return resultRepository.findMemberResult(memberId);
+    }
+
+    @Override
     public MbtiList mbtiChangeEnum(String mbti) {    // 문자열로 들어론 mbti를 enum type 으로 반환
                                                     // 없을 경우 null을 반환.
 
