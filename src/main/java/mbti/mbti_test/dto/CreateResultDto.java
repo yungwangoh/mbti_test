@@ -1,10 +1,8 @@
-package mbti.mbti_test.Dto;
+package mbti.mbti_test.dto;
 
 import lombok.*;
 import mbti.mbti_test.domain.MbtiList;
-import mbti.mbti_test.domain.Member;
 import mbti.mbti_test.domain.Result;
-import mbti.mbti_test.domain.WhaleCount;
 
 import java.time.LocalDateTime;
 

@@ -1,8 +1,6 @@
-package mbti.mbti_test.Dto;
+package mbti.mbti_test.dto;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import mbti.mbti_test.domain.Address;
 
 @Data

@@ -1,16 +1,14 @@
 package mbti.mbti_test.api;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import mbti.mbti_test.Dto.CreateMemberDto;
-import mbti.mbti_test.Dto.CreateResultDto;
-import mbti.mbti_test.Dto.CreateWhaleCountDto;
+import mbti.mbti_test.dto.CreateMemberDto;
+import mbti.mbti_test.dto.CreateResultDto;
+import mbti.mbti_test.dto.CreateWhaleCountDto;
 import mbti.mbti_test.domain.MbtiList;
 import mbti.mbti_test.domain.Member;
 import mbti.mbti_test.domain.Result;
 import mbti.mbti_test.domain.WhaleCount;
-import mbti.mbti_test.repository.ResultRepository;
 import mbti.mbti_test.service.MemberService;
 import mbti.mbti_test.service.ResultService;
 import mbti.mbti_test.service.WhaleCountService;
@@ -20,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 

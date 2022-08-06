@@ -1,4 +1,4 @@
-package mbti.mbti_test.Dto;
+package mbti.mbti_test.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
@@ -8,11 +8,11 @@ import mbti.mbti_test.domain.Address;
 import mbti.mbti_test.domain.Member;
 import mbti.mbti_test.domain.MemberStatus;
 
-import javax.persistence.Embedded;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
+import java.util.Collections;
 
 //0803 hayoon
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -44,7 +44,6 @@ public class CreateMemberDto {
     private LocalDateTime updateDateTime;
 
     //private List<MemberFileDto> fileList;
-
     public CreateMemberDto(String name, String account, String pwd,
                            Address address, String email,
                            MemberStatus memberStatus, LocalDateTime createDateTime) { // 객체로 파라미터로 넘기는게 더 좋아보임.
