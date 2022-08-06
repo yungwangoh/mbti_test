@@ -1,6 +1,8 @@
 package mbti.mbti_test.api;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import mbti.mbti_test.Dto.CreateMemberDto;
 import mbti.mbti_test.Dto.CreateResultDto;
 import mbti.mbti_test.Dto.CreateWhaleCountDto;
@@ -53,7 +55,7 @@ public class ResultApiController {
     }
 
     @GetMapping("/api/algorithm/result")
-    public List<CreateWhaleCountDto> changeMbtiEnumToString(@RequestParam(value = "iCount") int iCount, @RequestParam(value = "eCount") int eCount,
+    public MbtiList changeMbtiEnumToString(@RequestParam(value = "iCount") int iCount, @RequestParam(value = "eCount") int eCount,
                                           @RequestParam(value = "sCount") int sCount, @RequestParam(value = "nCount") int nCount,
                                           @RequestParam(value = "tCount") int tCount, @RequestParam(value = "fCount") int fCount,
                                           @RequestParam(value = "pCount") int pCount, @RequestParam(value = "jCount") int jCount) {
@@ -66,17 +68,7 @@ public class ResultApiController {
         String tfString = whaleAlgorithm.tfSelect(tCount, fCount);
         String pjString = whaleAlgorithm.pjSelect(pCount, jCount);
 
-        String whaleName = resultService.mbtiChangeEnum(whaleAlgorithm.mbtiCombination(ieString, snString, tfString, pjString))
-                .whaleNameMethod();
-
-        List<WhaleCount> whaleCounts = new ArrayList<>();
-        whaleCounts.add(whaleCountService.findWhaleNameMbti(whaleName));
-
-        List<CreateWhaleCountDto> whaleCountDtos = whaleCounts.stream()
-                .map(whaleCount -> new CreateWhaleCountDto(whaleCount))
-                .collect(toList());
-
-        return whaleCountDtos;
+        return resultService.mbtiChangeEnum(whaleAlgorithm.mbtiCombination(ieString, snString, tfString, pjString));
     }
 
     @GetMapping("/api/v3/user-results")
@@ -97,26 +89,15 @@ public class ResultApiController {
     }
 
     @PostMapping("/api/create/result")
-    public CreateResultResponse saveResultV2(@RequestBody @Valid CreateResultSave createResultSave) {
-        Member findMember = memberService.findOne(createResultSave.createMemberDto.getId());
-        WhaleCount whaleNameMbti = whaleCountService.findWhaleNameMbti(createResultSave.createWhaleCountDto.getWhaleName());
-        Result result = Result.createResult(findMember, whaleNameMbti);
+    public CreateResultResponse saveResultV2(@RequestBody @Valid CreateMemberDto createMemberDto,
+                                             @RequestBody @Valid MbtiList mbtiList) {
+
+        Member findMember = memberService.findOne(createMemberDto.getId());
+        WhaleCount whaleNameMbti = whaleCountService.findWhaleNameMbti(mbtiList.whaleNameMethod());
+        Result result = Result.createResult(findMember, mbtiList, whaleNameMbti);
         Long crateResultId = resultService.ResultJoin(result);
 
         return new CreateResultResponse(crateResultId);
-    }
-
-    @Data
-    static class CreateResultSave {
-        private CreateMemberDto createMemberDto;
-        private CreateWhaleCountDto createWhaleCountDto;
-
-        public CreateResultSave() {}
-
-        public CreateResultSave(CreateMemberDto createMemberDto, CreateWhaleCountDto createWhaleCountDto) {
-            this.createMemberDto = createMemberDto;
-            this.createWhaleCountDto = createWhaleCountDto;
-        }
     }
 
     @Data

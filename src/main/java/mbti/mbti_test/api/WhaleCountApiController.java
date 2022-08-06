@@ -1,17 +1,13 @@
 package mbti.mbti_test.api;
 
 import lombok.RequiredArgsConstructor;
-import mbti.mbti_test.Dto.CreateResultDto;
-import mbti.mbti_test.Dto.CreateWhaleCountDto;
+import mbti.mbti_test.dto.CreateWhaleCountDto;
 import mbti.mbti_test.domain.WhaleCount;
 import mbti.mbti_test.service.WhaleCountService;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 

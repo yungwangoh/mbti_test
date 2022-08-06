@@ -1,4 +1,4 @@
-package mbti.mbti_test.Dto;
+package mbti.mbti_test.dto;
 
 import lombok.AccessLevel;
 import lombok.Data;

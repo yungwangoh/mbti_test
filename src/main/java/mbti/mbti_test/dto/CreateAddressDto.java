@@ -1,11 +1,11 @@
 package mbti.mbti_test.Dto;
 
-import lombok.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import mbti.mbti_test.domain.Address;
 
 @Data
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CreateAddressDto {
 
     private String city;

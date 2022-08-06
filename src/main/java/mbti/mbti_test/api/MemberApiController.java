@@ -3,16 +3,25 @@ package mbti.mbti_test.api;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import mbti.mbti_test.Dto.CreateMemberDto;
-import mbti.mbti_test.Dto.UpdateMemberDto;
+import mbti.mbti_test.config.security.UserService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import mbti.mbti_test.config.security.JwtTokenProvider;
+import mbti.mbti_test.config.security.user.MemberLoginRepository;
+import mbti.mbti_test.dto.CreateMemberDto;
+import mbti.mbti_test.dto.UpdateMemberDto;
 import mbti.mbti_test.domain.Address;
 import mbti.mbti_test.domain.Member;
 import mbti.mbti_test.service.MemberService;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 //0803 hayoon
@@ -21,6 +30,10 @@ import java.util.stream.Collectors;
 public class MemberApiController {
 
     private final MemberService memberService;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final PasswordEncoder passwordEncoder;
+    private final MemberLoginRepository memberLoginRepository;
+    private final UserService userService;
 
     @GetMapping("/api/v2/members")
     public Result memberV2() {
@@ -59,6 +72,25 @@ public class MemberApiController {
         return new CreateMemberResponse(id);
     }
 
+    //회원가입
+    @PostMapping("/api/v3/members")
+    public ResponseEntity saveMemberV3(@RequestBody CreateMemberDto createMemberDto) {
+        Long memberId = userService.join(createMemberDto);
+        return memberId != null ?
+                ResponseEntity.ok().body("회원가입을 축하합니다.") :
+                ResponseEntity.badRequest().build();
+    }
+
+    // 로그인
+    @PostMapping("/api/v3/login")
+    public String login(@RequestBody Map<String, String> user) {
+        Member member = memberLoginRepository.findByAccount(user.get("account"))
+                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 ACCOUNT 입니다."));
+        if (!passwordEncoder.matches(user.get("password"), member.getPwd())) {
+            throw new IllegalArgumentException("잘못된 비밀번호입니다.");
+        }
+        return jwtTokenProvider.createToken(member.getUsername(), member.getRoles());
+    }
     private Member createMember(CreateMemberDto createMemberDto) {
         Member member = new Member(createMemberDto.getName(), createMemberDto.getAccount(), createMemberDto.getPwd(),
                 createMemberDto.getAddress(), createMemberDto.getEmail(), createMemberDto.getMemberStatus());
