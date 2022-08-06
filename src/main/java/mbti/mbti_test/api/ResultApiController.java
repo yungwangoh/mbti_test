@@ -61,12 +61,14 @@ public class ResultApiController {
                                           @RequestParam(value = "pCount") int pCount, @RequestParam(value = "jCount") int jCount) {
 
         WhaleAlgorithm whaleAlgorithm = new WhaleAlgorithm(iCount, eCount, sCount, nCount, tCount, fCount, pCount, jCount);
-        String icString = whaleAlgorithm.ieSelect(iCount, eCount);
+        //0806 Hayoon
+        //isString으로 되어있어서 ieString으로 변수명 변경함.
+        String ieString = whaleAlgorithm.ieSelect(iCount, eCount);
         String snString = whaleAlgorithm.snSelect(sCount, nCount);
         String tfString = whaleAlgorithm.tfSelect(tCount, fCount);
         String pjString = whaleAlgorithm.pjSelect(pCount, jCount);
 
-        return resultService.mbtiChangeEnum(whaleAlgorithm.mbtiCombination(icString, snString, tfString, pjString));
+        return resultService.mbtiChangeEnum(whaleAlgorithm.mbtiCombination(ieString, snString, tfString, pjString));
     }
 
     @GetMapping("/api/v3/user-results")
