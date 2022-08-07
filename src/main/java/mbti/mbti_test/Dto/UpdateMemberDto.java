@@ -1,6 +1,9 @@
 package mbti.mbti_test.Dto;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import mbti.mbti_test.domain.Address;
 
 import javax.validation.constraints.NotEmpty;
@@ -8,6 +11,8 @@ import java.time.LocalDateTime;
 
 //0803 hayoon
 @Data
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UpdateMemberDto {
 
     private String email;

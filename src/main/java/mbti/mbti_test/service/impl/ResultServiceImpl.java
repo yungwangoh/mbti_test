@@ -34,7 +34,7 @@ public class ResultServiceImpl implements ResultService {
     @Override
     public String ResultWhale(Long resultId) {
         Result findResult = resultRepository.findOne(resultId);
-        return findResult.getMbtiList().whaleNameMethod();
+        return findResult.getWhaleCount().getName();
     }
 
     @Override

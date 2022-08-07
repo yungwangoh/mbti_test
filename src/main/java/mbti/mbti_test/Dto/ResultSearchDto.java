@@ -1,13 +1,12 @@
 package mbti.mbti_test.Dto;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import mbti.mbti_test.domain.MbtiList;
 import mbti.mbti_test.domain.ResultSearch;
 
 @Data
 @Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ResultSearchDto {
 
     private String memberName;

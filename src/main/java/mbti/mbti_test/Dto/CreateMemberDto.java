@@ -59,11 +59,14 @@ public class CreateMemberDto {
     }
 
     public CreateMemberDto(Member member) { // createResultDto에 쓰일 CreateMemberDto 생성 0804.
+        this.id = member.getId();
         this.name = member.getName();
         this.email = member.getEmail();
         this.address = member.getAddress();
         this.account = member.getAccount();
         this.pwd = member.getPwd();
         this.memberStatus = member.getMemberStatus();
+        this.createDateTime = LocalDateTime.now();
+        this.updateDateTime = LocalDateTime.now();
     }
 }

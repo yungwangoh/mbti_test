@@ -42,23 +42,36 @@ public class WhaleAlgorithm {
 
     public String ieSelect(int iCount, int eCount) {
 
-        if(iCount > eCount) return "I";
-        else return "E";
+        if((iCount >= 0 && iCount <= 3) && (eCount >= 0 && eCount <= 3)) {
+            if (iCount > eCount) return "I";
+            else return "E";
+        }
+        else throw new IllegalStateException("Invalid Error!!");
     }
 
     public String snSelect(int sCount, int nCount) {
-        if(sCount > nCount) return "S";
-        else return "N";
+
+        if((sCount >= 0 && sCount <= 3) && (nCount >= 0 && nCount <= 3)) {
+            if (sCount > nCount) return "S";
+            else return "N";
+        }
+        else throw new IllegalStateException("Invalid Error!!");
     }
 
     public String tfSelect(int tCount, int fCount) {
-        if(tCount > fCount) return "T";
-        else return "F";
+
+        if((tCount >= 0 && tCount <= 3) && (fCount >= 0 && fCount <= 3)) {
+            if (tCount > fCount) return "T";
+            else return "F";
+        } else throw new IllegalStateException("Invalid Error!!");
     }
 
     public String pjSelect(int pCount, int jCount) {
-        if(pCount > jCount) return "P";
-        else return "J";
+
+        if((pCount >= 0 && pCount <= 3) && (jCount >= 0 && jCount <= 3)) {
+            if (pCount > jCount) return "P";
+            else return "J";
+        } else throw new IllegalStateException("Invalid Error");
     }
 
     public String mbtiCombination(String ie, String sn, String tf, String pj) {
