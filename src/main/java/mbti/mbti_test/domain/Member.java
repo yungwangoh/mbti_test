@@ -69,13 +69,13 @@ public class Member implements UserDetails {
     }
 
     //0804 Hayoon
-    // Setter 삭제 후 updateMember 메서드 생성
-    public void updateMember(String account, String pwd, Address address, String email, LocalDateTime updateDateTime) {
+    //updateMember 메서드 생성
+    public void updateMember(String account, String pwd, Address address, String email) {
         this.account = account;
         this.pwd = pwd;
         this.address = address;
         this.email = email;
-        this.updateDateTime = updateDateTime;
+        this.updateDateTime = LocalDateTime.now();
 
         //회원일 경우-> 테스트 결과지 회원상태로 수정 후 공유가능?
         //result.setMemberStatus(MemberStatus.MEMBER);

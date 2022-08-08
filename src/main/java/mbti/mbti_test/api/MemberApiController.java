@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import mbti.mbti_test.config.security.UserService;
+import mbti.mbti_test.dto.UserDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import mbti.mbti_test.config.security.JwtTokenProvider;
@@ -35,14 +36,21 @@ public class MemberApiController {
     private final MemberLoginRepository memberLoginRepository;
     private final UserService userService;
 
+
     @GetMapping("/api/v2/members")
-    public Result memberV2() {
+    public List<CreateMemberDto> memberV2() {
         List<Member> findMembers = memberService.findMembers();
-        List<CreateMemberDto> collect = findMembers.stream()
-                .map(m -> new CreateMemberDto(m.getName(), m.getAccount(), m.getPwd(),
-                        m.getAddress(), m.getEmail(), m.getMemberStatus(), m.getCreateDateTime()))
+        List<CreateMemberDto> memberDtos = findMembers.stream()
+                .map(m -> new CreateMemberDto(m))
                 .collect(Collectors.toList());
-        return new Result(collect.size(), collect);
+        return memberDtos;
+    }
+
+    //0808 Hayoon
+    //Data JPA 미구현.
+    @GetMapping("/api/v3/members")
+    public List<Member> findAllUser() {
+        return memberLoginRepository.findAll();
     }
 
     @GetMapping("/api/v2.1/members")
@@ -63,47 +71,51 @@ public class MemberApiController {
         private T data;
     }
 
-    @PostMapping("/api/v2/members")
-    public CreateMemberResponse saveMemberV2(@RequestBody @Valid CreateMemberDto createMemberDto) {
-
-        Member member = createMember(createMemberDto);
-
-        Long id = memberService.join(member);
-        return new CreateMemberResponse(id);
-    }
-
     //회원가입
-    @PostMapping("/api/v3/members")
+    @PostMapping("/api/v3/join")
     public ResponseEntity saveMemberV3(@RequestBody CreateMemberDto createMemberDto) {
         Long memberId = userService.join(createMemberDto);
         return memberId != null ?
                 ResponseEntity.ok().body("회원가입을 축하합니다.") :
                 ResponseEntity.badRequest().build();
     }
-
+    /**
+     * {
+        "account": "sejong123",
+        "pwd": "123456",
+        "address": {
+            "city": "서울시",
+            "street": "광진구",
+            "zipcode": "세종3로"
+        },
+        "email": "abcd1234@naver.com",
+        "name": "AAA"
+        }
+     * @param userDto
+     * @return
+     */
     // 로그인
+    //0808 Hayoon
+    //https://jwt.io/ 에서 Encoder -> Decoder(Payload) 확인가능.
     @PostMapping("/api/v3/login")
-    public String login(@RequestBody Map<String, String> user) {
-        Member member = memberLoginRepository.findByAccount(user.get("account"))
+    public String login(@RequestBody UserDto userDto) {
+        System.out.println(userDto.getAccount() + " " + userDto.getPassword());
+        Member member = memberLoginRepository.findByAccount(userDto.getAccount())
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 ACCOUNT 입니다."));
-        if (!passwordEncoder.matches(user.get("password"), member.getPwd())) {
+        if (!passwordEncoder.matches(userDto.getPassword(), member.getPassword())) {
             throw new IllegalArgumentException("잘못된 비밀번호입니다.");
         }
+
+        ResponseEntity.ok().body("로그인 성공!.");
         return jwtTokenProvider.createToken(member.getUsername(), member.getRoles());
     }
-    private Member createMember(CreateMemberDto createMemberDto) {
-        Member member = new Member(createMemberDto.getName(), createMemberDto.getAccount(), createMemberDto.getPwd(),
-                createMemberDto.getAddress(), createMemberDto.getEmail(), createMemberDto.getMemberStatus());
 
-        return member;
-    }
 
     @PutMapping("/api/v2/members/{id}")
     public UpdateMemberResponse updateMemberV2(@PathVariable("id") Long id,
                                                @RequestBody @Valid UpdateMemberDto updateMemberDto) {
         Member findMember = memberService.findOne(id);
-        findMember.updateMember(updateMemberDto.getAccount(), updateMemberDto.getPwd(), updateMemberDto.getAddress(),
-                updateMemberDto.getEmail(), updateMemberDto.getUpdateDateTime());
+        memberService.updateMember(findMember, updateMemberDto);
         return new UpdateMemberResponse(findMember.getEmail(),
                 findMember.getAddress(), findMember.getAccount(), findMember.getPwd(),
                 findMember.getUpdateDateTime());

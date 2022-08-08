@@ -24,7 +24,7 @@ public class JwtTokenProvider {
     private String secretKey = "mbti_test";
 
     //토큰 유효시간 30분
-    private long tokenValidTime = 30 * 60 * 1000L;
+    private long tokenValidTime = 60 * 60 * 1000L; // 1시간만 토큰 유효
 
     private final UserDetailsService userDetailsService;
 

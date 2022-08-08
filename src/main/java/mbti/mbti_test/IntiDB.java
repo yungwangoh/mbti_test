@@ -1,7 +1,11 @@
 package mbti.mbti_test;
 
 import lombok.RequiredArgsConstructor;
+import mbti.mbti_test.config.security.UserService;
+import mbti.mbti_test.config.security.user.MemberLoginRepository;
 import mbti.mbti_test.domain.*;
+import mbti.mbti_test.dto.CreateMemberDto;
+import mbti.mbti_test.repository.MemberRepository;
 import mbti.mbti_test.repository.WhaleCountRepository;
 import mbti.mbti_test.service.MemberService;
 import mbti.mbti_test.service.ResultService;
@@ -13,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 
 // API를 테스트하기위한 DB데이터 초기화
 @Component
@@ -30,7 +35,10 @@ public class IntiDB {
     @Transactional
     @RequiredArgsConstructor
     static class InitDbService {
-        private final MemberService memberService;
+        //0808 Hayoon
+        //JWT Token 획득위한 UserService
+        private final UserService userService;
+        private final MemberRepository memberRepository;
         private final WhaleCountRepository whaleCountRepository;
         private final ResultService resultService;
         private final WhaleAlgorithm whaleAlgorithm;
@@ -82,9 +90,10 @@ public class IntiDB {
         }
 
         private Member createMember(String name, String account, String pwd, Address address, String email, MemberStatus memberStatus) {
-            Member member = new Member(name, account, pwd, address, email, memberStatus);
-            memberService.join(member);
-            return member;
+            //0808 Hayoon
+            //memberService->userService로 변경
+            Long memberId = userService.join(new CreateMemberDto(name, account, pwd, address, email));
+            return memberRepository.findOne(memberId);
         }
     }
 }

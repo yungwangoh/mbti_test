@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 @RequiredArgsConstructor
@@ -17,12 +18,13 @@ import java.util.Collections;
 public class UserService {
 
     private final MemberLoginRepository memberLoginRepository;
-    private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final PasswordEncoder passwordEncoder;
 
     //회원가입
     public Long join(CreateMemberDto createMemberDto) {
         Long memberId = getRole_user(createMemberDto);
+        System.out.println("memberId"+memberId);
         return memberId;
     }
 
@@ -30,11 +32,13 @@ public class UserService {
 
         return memberLoginRepository.save(Member.builder()
                         .account(createMemberDto.getAccount())
-                        .pwd(createMemberDto.getPwd())
+                        .pwd(passwordEncoder.encode(createMemberDto.getPwd()))
                         .address(createMemberDto.getAddress())
                         .email(createMemberDto.getEmail())
                         .name(createMemberDto.getName())
-                        .createDateTime(createMemberDto.getCreateDateTime())
+                        .createDateTime(LocalDateTime.now())
+                        .updateDateTime(LocalDateTime.now())
+                        .memberStatus(MemberStatus.USER)
                         .roles(Collections.singletonList("ROLE_USER"))
                         .build())
                 .getId();
