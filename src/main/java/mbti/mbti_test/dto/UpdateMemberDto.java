@@ -1,6 +1,8 @@
 package mbti.mbti_test.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import mbti.mbti_test.domain.Address;
 
 import javax.validation.constraints.NotEmpty;
@@ -8,6 +10,8 @@ import java.time.LocalDateTime;
 
 //0803 hayoon
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UpdateMemberDto {
 
     private String email;
@@ -22,14 +26,4 @@ public class UpdateMemberDto {
     private LocalDateTime updateDateTime;
     //private List<MemberFileDto> fileList;
 
-
-    public UpdateMemberDto(String email, Address address,
-                           String account, String pwd, Long creatorId,
-                           LocalDateTime updateDateTime) {
-        this.email = email;
-        this.address = address;
-        this.account = account;
-        this.pwd = pwd;
-        this.updateDateTime = updateDateTime;
-    }
 }

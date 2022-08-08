@@ -3,6 +3,7 @@ package mbti.mbti_test.service.impl;
 import lombok.RequiredArgsConstructor;
 import mbti.mbti_test.domain.Address;
 import mbti.mbti_test.domain.Member;
+import mbti.mbti_test.dto.UpdateMemberDto;
 import mbti.mbti_test.repository.MemberRepository;
 import mbti.mbti_test.service.MemberService;
 import org.springframework.stereotype.Service;
@@ -43,15 +44,25 @@ public class MemberServiceImpl implements MemberService {
     public List<Member> findMembers() {
         return memberRepository.findAll();
     }
-
+    //0808 Hayoon
+    //회원수정 위한 Service Method
+    @Override
+    @Transactional
+    public void updateMember(Member findMember, UpdateMemberDto updateMemberDto) {
+        Member member  = memberRepository.findOne(findMember.getId());
+        member.updateMember(updateMemberDto.getAccount(), updateMemberDto.getPwd(),
+                updateMemberDto.getAddress(), updateMemberDto.getEmail());
+    }
 
     /**
      * 회원검증
      */
     private void userValidation(Member member) {
         List<Member> findByName = memberRepository.findByName(member.getName());
-        if(!findByName.isEmpty()) {
+        if (!findByName.isEmpty()) {
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         }
     }
+
+
 }
