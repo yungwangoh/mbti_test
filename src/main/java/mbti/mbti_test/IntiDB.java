@@ -17,6 +17,7 @@ import java.util.List;
 // API를 테스트하기위한 DB데이터 초기화
 @Component
 @RequiredArgsConstructor
+@Transactional
 public class IntiDB {
 
     private final InitDbService initDbService;
