@@ -34,14 +34,6 @@ class ResultServiceImplTest {
     @Autowired EntityManager em;
 
     @Test
-    @Transactional
-    //@Rollback(value = false)
-    public void 유저가고른고래의수() {
-        whaleCountRepository.initWhaleMethod();
-        createMembers();
-    }
-
-    @Test
     public void 문자열_MBTI를_ENUM으로_변환() { // 잘 작동하는것을 확인
         MbtiList mbtiList = resultService.mbtiChangeEnum("ISTP");
         assertEquals("귀신고래", mbtiList.whaleNameMethod());
@@ -82,8 +74,6 @@ class ResultServiceImplTest {
         WhaleCount whaleName4 = whaleCountRepository.findWhaleName(MbtiList.ISFJ.whaleNameMethod());
         Result result4 = Result.createResult(member4, whaleName4);
 
-        WhaleCount one = whaleCountRepository.findOne(whaleName1.getId());
-        one.getCount();
         resultService.ResultJoin(result);
         resultService.ResultJoin(result1);
         resultService.ResultJoin(result3);

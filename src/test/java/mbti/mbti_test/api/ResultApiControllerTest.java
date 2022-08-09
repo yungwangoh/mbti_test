@@ -3,8 +3,8 @@ package mbti.mbti_test.api;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import mbti.mbti_test.Dto.CreateMemberDto;
-import mbti.mbti_test.Dto.CreateWhaleCountDto;
+import mbti.mbti_test.dto.CreateMemberDto;
+import mbti.mbti_test.dto.CreateWhaleCountDto;
 import mbti.mbti_test.domain.Address;
 import mbti.mbti_test.domain.Member;
 import mbti.mbti_test.domain.MemberStatus;
@@ -12,21 +12,10 @@ import mbti.mbti_test.domain.WhaleCount;
 import mbti.mbti_test.service.MemberService;
 import mbti.mbti_test.service.ResultService;
 import mbti.mbti_test.service.WhaleCountService;
-import mbti.mbti_test.service.impl.WhaleAlgorithm;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import javax.validation.Valid;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
