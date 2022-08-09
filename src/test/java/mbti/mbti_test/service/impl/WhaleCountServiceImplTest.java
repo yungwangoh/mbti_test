@@ -1,5 +1,6 @@
 package mbti.mbti_test.service.impl;
 
+import mbti.mbti_test.Dto.CreateWhaleCountDto;
 import mbti.mbti_test.domain.MbtiList;
 import mbti.mbti_test.domain.WhaleCount;
 import mbti.mbti_test.repository.WhaleCountRepository;
@@ -59,6 +60,18 @@ class WhaleCountServiceImplTest {
 
         int count4 = whaleCount1.getCount();
         System.out.println("ID = " + whaleId1 + " count4 = " + count4);
+    }
+
+    @Test
+    public void 고래궁합() {
+        WhaleCount 일각고래 = whaleCountRepository.findWhaleName("상괭이");
+        CreateWhaleCountDto createWhaleCountDto = new CreateWhaleCountDto(일각고래);
+
+        List<WhaleCount> whaleCounts = whaleCountService.whaleCompatibility(createWhaleCountDto);
+
+        whaleCounts.forEach(e -> {
+            System.out.println("e.getName() = " + e.getName());
+        });
     }
 
     @Test

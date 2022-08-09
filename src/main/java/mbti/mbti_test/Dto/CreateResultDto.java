@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 
 //0803 hayoon
 @Data
-@Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CreateResultDto {
 

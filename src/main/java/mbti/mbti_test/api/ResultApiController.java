@@ -52,21 +52,19 @@ public class ResultApiController {
         return resultDtos;
     }
 
-    @GetMapping("/api/algorithm/result")
-    public List<CreateWhaleCountDto> changeMbtiEnumToString(@RequestParam(value = "iCount") int iCount, @RequestParam(value = "eCount") int eCount,
-                                          @RequestParam(value = "sCount") int sCount, @RequestParam(value = "nCount") int nCount,
-                                          @RequestParam(value = "tCount") int tCount, @RequestParam(value = "fCount") int fCount,
-                                          @RequestParam(value = "pCount") int pCount, @RequestParam(value = "jCount") int jCount) {
+    @PostMapping("/api/algorithm/result")
+    public List<CreateWhaleCountDto> changeMbtiEnumToString(@RequestBody @Valid WhaleAlgorithm whaleAlgorithm) {
 
-        WhaleAlgorithm whaleAlgorithm = new WhaleAlgorithm(iCount, eCount, sCount, nCount, tCount, fCount, pCount, jCount);
+        WhaleAlgorithm algorithm = new WhaleAlgorithm(whaleAlgorithm);
+
         //0806 Hayoon
         //isString으로 되어있어서 ieString으로 변수명 변경함.
-        String ieString = whaleAlgorithm.ieSelect(iCount, eCount);
-        String snString = whaleAlgorithm.snSelect(sCount, nCount);
-        String tfString = whaleAlgorithm.tfSelect(tCount, fCount);
-        String pjString = whaleAlgorithm.pjSelect(pCount, jCount);
+        String ieString = algorithm.ieSelect();
+        String snString = algorithm.snSelect();
+        String tfString = algorithm.tfSelect();
+        String pjString = algorithm.pjSelect();
 
-        String whaleName = resultService.mbtiChangeEnum(whaleAlgorithm.mbtiCombination(ieString, snString, tfString, pjString))
+        String whaleName = resultService.mbtiChangeEnum(algorithm.mbtiCombination(ieString, snString, tfString, pjString))
                 .whaleNameMethod();
 
         List<WhaleCount> whaleCounts = new ArrayList<>();
@@ -79,15 +77,15 @@ public class ResultApiController {
         return whaleCountDtos;
     }
 
-    @GetMapping("/api/v3/user-results")
-    public List<CreateWhaleCountDto> userResult(@RequestParam("memberId") Long memberId) {
+    @PostMapping("/api/history/result")
+    public List<CreateWhaleCountDto> userResultHistory(@RequestBody @Valid CreateMemberDto createMemberDto) {
 
         List<WhaleCount> whaleCounts = new ArrayList<>();
-        List<Result> memberResultService = resultService.findMemberResultService(memberId);
+        List<Result> memberResultService = resultService.findMemberResultService(createMemberDto.getId());
 
-        for(Result result : memberResultService) {
+        memberResultService.forEach(result -> {
             whaleCounts.add(result.getWhaleCount());
-        }
+        });
 
         List<CreateWhaleCountDto> whaleCountDtos = whaleCounts.stream()
                 .map(whaleCount -> new CreateWhaleCountDto(whaleCount))
@@ -107,11 +105,10 @@ public class ResultApiController {
     }
 
     @Data
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     static class CreateResultSave {
         private CreateMemberDto createMemberDto;
         private CreateWhaleCountDto createWhaleCountDto;
-
-        public CreateResultSave() {}
 
         public CreateResultSave(CreateMemberDto createMemberDto, CreateWhaleCountDto createWhaleCountDto) {
             this.createMemberDto = createMemberDto;
@@ -120,6 +117,7 @@ public class ResultApiController {
     }
 
     @Data
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     static class CreateResultResponse {
         private Long resultId;
 

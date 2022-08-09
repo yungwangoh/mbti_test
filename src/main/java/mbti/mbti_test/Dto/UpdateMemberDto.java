@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 
 //0803 hayoon
 @Data
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UpdateMemberDto {
 

@@ -9,15 +9,23 @@ import mbti.mbti_test.domain.Address;
 import mbti.mbti_test.domain.Member;
 import mbti.mbti_test.domain.MemberStatus;
 import mbti.mbti_test.domain.WhaleCount;
+import mbti.mbti_test.service.MemberService;
 import mbti.mbti_test.service.ResultService;
 import mbti.mbti_test.service.WhaleCountService;
+import mbti.mbti_test.service.impl.WhaleAlgorithm;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.validation.Valid;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
+import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -25,7 +33,16 @@ import static org.junit.jupiter.api.Assertions.*;
 class ResultApiControllerTest {
 
     @Autowired
+    ResultService resultService;
+
+    @Autowired
+    MemberService memberService;
+
+    @Autowired
     WhaleCountService whaleCountService;
+
+    @Autowired
+    ResultApiController resultApiController;
 
     @Test
     public void jsonTest() throws JsonProcessingException { // 객체를 Json 형식으로 Convert;
@@ -35,8 +52,14 @@ class ResultApiControllerTest {
 
         WhaleCount whaleCount = whaleCountService.findWhaleNameMbti("범고래");
 
+        CreateWhaleCountDto createWhaleCountDto = new CreateWhaleCountDto(whaleCount);
+
+        Member findMember = memberService.findOne(17L);
+        CreateMemberDto createMemberDto = new CreateMemberDto(findMember);
+
         ResultApiController.CreateResultSave resultApiController = new ResultApiController
                 .CreateResultSave(new CreateMemberDto(member), new CreateWhaleCountDto(whaleCount));
+
 
         ObjectMapper mapper = new ObjectMapper();
 

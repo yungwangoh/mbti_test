@@ -4,7 +4,6 @@ import lombok.*;
 import mbti.mbti_test.domain.WhaleCount;
 
 @Data
-@Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CreateWhaleCountDto { // 필요해서 생성 0804
 

@@ -1,77 +1,94 @@
 package mbti.mbti_test.service.impl;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import mbti.mbti_test.domain.WhaleCount;
 import mbti.mbti_test.repository.WhaleCountRepository;
 import mbti.mbti_test.service.WhaleCountService;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.text.DecimalFormat;
 import java.util.List;
 
+@Data
 @Service
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // 여기 추가
 public class WhaleAlgorithm {
 
-    private WhaleCountService whaleCountService;
-
+    @NotNull
     private int iCount;
+
+    @NotNull
     private int eCount;
 
+    @NotNull
     private int sCount;
+
+    @NotNull
     private int nCount;
 
+    @NotNull
     private int tCount;
+
+    @NotNull
     private int fCount;
 
+    @NotNull
     private int pCount;
+
+    @NotNull
     private int jCount;
 
-    public WhaleAlgorithm(int iCount, int eCount, int sCount, int nCount, int tCount, int fCount, int pCount, int jCount) {
-        this.iCount = iCount;
-        this.eCount = eCount;
-        this.sCount = sCount;
-        this.nCount = nCount;
-        this.tCount = tCount;
-        this.fCount = fCount;
-        this.pCount = pCount;
-        this.jCount = jCount;
+    public WhaleAlgorithm(WhaleAlgorithm whaleAlgorithm) {
+        this.iCount = whaleAlgorithm.getICount();
+        this.eCount = whaleAlgorithm.getECount();
+        this.sCount = whaleAlgorithm.getSCount();
+        this.nCount = whaleAlgorithm.getNCount();
+        this.tCount = whaleAlgorithm.getTCount();
+        this.fCount = whaleAlgorithm.getFCount();
+        this.pCount = whaleAlgorithm.getPCount();
+        this.jCount = whaleAlgorithm.getJCount();
     }
 
-    public String ieSelect(int iCount, int eCount) {
+    public String ieSelect() {
 
-        if((iCount >= 0 && iCount <= 3) && (eCount >= 0 && eCount <= 3)) {
-            if (iCount > eCount) return "I";
-            else return "E";
+        if((this.iCount >= 0 && this.iCount <= 3) && (this.eCount >= 0 && this.eCount <= 3)) {
+            if (this.iCount > this.eCount) return "I";
+            else if(this.iCount < this.eCount) return "E";
+            else throw new IllegalStateException("Invalid Error");
         }
         else throw new IllegalStateException("Invalid Error!!");
     }
 
-    public String snSelect(int sCount, int nCount) {
+    public String snSelect() {
 
-        if((sCount >= 0 && sCount <= 3) && (nCount >= 0 && nCount <= 3)) {
-            if (sCount > nCount) return "S";
-            else return "N";
+        if((this.sCount >= 0 && this.sCount <= 3) && (this.nCount >= 0 && this.nCount <= 3)) {
+            if (this.sCount > this.nCount) return "S";
+            else if(this.sCount < this.nCount) return "N";
+            else throw new IllegalStateException("Invalid Error");
         }
         else throw new IllegalStateException("Invalid Error!!");
     }
 
-    public String tfSelect(int tCount, int fCount) {
+    public String tfSelect() {
 
-        if((tCount >= 0 && tCount <= 3) && (fCount >= 0 && fCount <= 3)) {
-            if (tCount > fCount) return "T";
-            else return "F";
-        } else throw new IllegalStateException("Invalid Error!!");
+        if((this.tCount >= 0 && this.tCount <= 3) && (this.fCount >= 0 && this.fCount <= 3)) {
+            if (this.tCount > this.fCount) return "T";
+            else if (this.tCount < this.fCount) return "F";
+            else throw new IllegalStateException("Invalid Error");
+        }
+        else throw new IllegalStateException("Invalid Error!!");
     }
 
-    public String pjSelect(int pCount, int jCount) {
+    public String pjSelect() {
 
-        if((pCount >= 0 && pCount <= 3) && (jCount >= 0 && jCount <= 3)) {
-            if (pCount > jCount) return "P";
-            else return "J";
-        } else throw new IllegalStateException("Invalid Error");
+        if((this.pCount >= 0 && this.pCount <= 3) && (this.jCount >= 0 && this.jCount <= 3)) {
+            if (this.pCount > this.jCount) return "P";
+            else if (this.pCount < this.jCount) return "J";
+            else throw new IllegalStateException("Invalid Error");
+        }
+        else throw new IllegalStateException("Invalid Error");
     }
 
     public String mbtiCombination(String ie, String sn, String tf, String pj) {
@@ -104,6 +121,5 @@ public class WhaleAlgorithm {
             //whaleCountService.whaleJoin(whaleCount);
         }
     }
-    //짝꿍조합(ISTP - ESFP),
 }
 

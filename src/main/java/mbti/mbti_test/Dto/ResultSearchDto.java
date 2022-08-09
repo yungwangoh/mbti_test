@@ -5,7 +5,6 @@ import mbti.mbti_test.domain.MbtiList;
 import mbti.mbti_test.domain.ResultSearch;
 
 @Data
-@Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ResultSearchDto {
 
