@@ -1,6 +1,6 @@
 package mbti.mbti_test.service;
 
-import mbti.mbti_test.Dto.CreateWhaleCountDto;
+import mbti.mbti_test.dto.CreateWhaleCountDto;
 import mbti.mbti_test.domain.WhaleCount;
 
 import java.util.List;

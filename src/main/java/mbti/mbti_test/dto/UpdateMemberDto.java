@@ -1,8 +1,7 @@
-package mbti.mbti_test.Dto;
+package mbti.mbti_test.dto;
 
 import lombok.AccessLevel;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import mbti.mbti_test.domain.Address;
 

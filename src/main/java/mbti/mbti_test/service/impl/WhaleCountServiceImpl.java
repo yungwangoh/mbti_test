@@ -1,18 +1,16 @@
 package mbti.mbti_test.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import mbti.mbti_test.Dto.CreateWhaleCountDto;
+import mbti.mbti_test.dto.CreateWhaleCountDto;
 import mbti.mbti_test.domain.WhaleCount;
 import mbti.mbti_test.repository.WhaleCountRepository;
 import mbti.mbti_test.service.WhaleCountService;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.ls.LSInput;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

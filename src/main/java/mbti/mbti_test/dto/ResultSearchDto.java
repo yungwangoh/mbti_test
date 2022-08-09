@@ -1,4 +1,4 @@
-package mbti.mbti_test.Dto;
+package mbti.mbti_test.dto;
 
 import lombok.*;
 import mbti.mbti_test.domain.MbtiList;
