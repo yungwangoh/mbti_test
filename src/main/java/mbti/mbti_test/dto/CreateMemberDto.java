@@ -49,6 +49,7 @@ public class CreateMemberDto {
     //private List<MemberFileDto> fileList;
 
 
+    //생성용 DTO
     public CreateMemberDto(String name, String account, String pwd,
                            Address address, String email) { // 객체로 파라미터로 넘기는게 더 좋아보임.
         this.name = name;

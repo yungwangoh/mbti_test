@@ -67,10 +67,11 @@ public class ResultApiController {
 
         return resultService.mbtiChangeEnum(whaleAlgorithm.mbtiCombination(ieString, snString, tfString, pjString));
     }
-
-    @GetMapping("/api/v3/user-results")
-    public List<CreateWhaleCountDto> userResult(@RequestParam("memberId") Long memberId) {
-
+    //0808 Hayoon
+    //@PostMapping("/api/v3/user-results/{memberId}")
+    //public List<CreateWhaleCountDto> userResult(@PathVariable("memberId") Long memberId) {
+    @PostMapping("/api/v3/user-results")
+    public List<CreateWhaleCountDto> userResult(@RequestBody Long memberId) {
         List<WhaleCount> whaleCounts = new ArrayList<>();
         List<Result> memberResultService = resultService.findMemberResultService(memberId);
 
