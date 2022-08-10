@@ -1,12 +1,11 @@
 package mbti.mbti_test.dto;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import mbti.mbti_test.domain.WhaleCount;
 
 @Data
 @Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CreateWhaleCountDto { // 필요해서 생성 0804
 
     private Long whaleId;

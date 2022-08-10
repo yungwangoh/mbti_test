@@ -1,10 +1,8 @@
 package mbti.mbti_test.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import mbti.mbti_test.domain.Address;
 import mbti.mbti_test.domain.Member;
@@ -21,7 +19,6 @@ import java.util.Collections;
 @Data
 public class CreateMemberDto {
 
-    @JsonIgnore
     private Long id;
 
     @NotEmpty(message = "회원 이름은 필수입니다.")
@@ -47,22 +44,19 @@ public class CreateMemberDto {
     private LocalDateTime updateDateTime;
 
     //private List<MemberFileDto> fileList;
-
-
-    //생성용 DTO
     public CreateMemberDto(String name, String account, String pwd,
-                           Address address, String email) { // 객체로 파라미터로 넘기는게 더 좋아보임.
+                           Address address, String email,
+                           MemberStatus memberStatus, LocalDateTime createDateTime) { // 객체로 파라미터로 넘기는게 더 좋아보임.
         this.name = name;
         this.account = account;
         this.pwd = pwd;
         this.address = address;
         this.email = email;
-        this.memberStatus = MemberStatus.USER;
-        this.createDateTime = LocalDateTime.now();
-        this.updateDateTime = this.createDateTime;
+        this.memberStatus = memberStatus;
+        this.createDateTime = createDateTime;
+        this.updateDateTime = createDateTime;
     }
 
-    //조회용 DTO
     public CreateMemberDto(Member member) { // createResultDto에 쓰일 CreateMemberDto 생성 0804.
         this.name = member.getName();
         this.email = member.getEmail();
@@ -70,7 +64,5 @@ public class CreateMemberDto {
         this.account = member.getAccount();
         this.pwd = member.getPwd();
         this.memberStatus = member.getMemberStatus();
-        this.createDateTime = member.getCreateDateTime();
-        this.updateDateTime = member.getUpdateDateTime();
     }
 }

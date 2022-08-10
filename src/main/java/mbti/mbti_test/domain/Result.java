@@ -26,24 +26,20 @@ public class Result {
     @JsonIgnore // 양방향 매핑때 추가 해야함 안그러면 무한루프에 빠짐
     private Member member;
 
-    @Enumerated(EnumType.STRING)
-    private MbtiList mbtiList;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "whaleCount_id")
     private WhaleCount whaleCount;
 
-    public Result(Member member, MbtiList mbtiList, WhaleCount whaleCount) {
+    public Result(Member member, WhaleCount whaleCount) {
         this.testTime = LocalDateTime.now();
         this.member = member;
-        this.mbtiList = mbtiList;
         this.whaleCount = whaleCount;
     }
 
     // 비즈니스 로직
     // 비즈니스 로직이 들어갈 경우에는 생성자에다 말고 메서드를 따로 선언한다.
-    public static Result createResult(Member member, MbtiList mbtiList, WhaleCount whaleCount) {
-        Result result = new Result(member, mbtiList, whaleCount);
+    public static Result createResult(Member member, WhaleCount whaleCount) {
+        Result result = new Result(member, whaleCount);
         result.getWhaleCount().whaleCountValue(); // 비즈니스 로직
         return result;
     }

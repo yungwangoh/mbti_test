@@ -3,7 +3,6 @@ package mbti.mbti_test.api;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import mbti.mbti_test.config.security.UserService;
 import mbti.mbti_test.dto.UserDto;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +22,9 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.hibernate.tool.schema.SchemaToolingLogging.LOGGER;
-
 //0803 hayoon
 @RestController
 @RequiredArgsConstructor
-@Slf4j
 public class MemberApiController {
 
     private final MemberService memberService;
@@ -52,6 +48,17 @@ public class MemberApiController {
     @GetMapping("/api/v3/members")
     public List<Member> findAllUser() {
         return memberLoginRepository.findAll();
+    }
+
+    @GetMapping("/api/v2.1/members")
+    public List<CreateMemberDto> memberV2_1() {
+        List<Member> members = memberService.findMembers();
+
+        List<CreateMemberDto> createMemberDtos = members.stream()
+                .map(member -> new CreateMemberDto(member))
+                .collect(Collectors.toList());
+
+        return createMemberDtos;
     }
 
     @Data
@@ -89,25 +96,23 @@ public class MemberApiController {
     //https://jwt.io/ 에서 Encoder -> Decoder(Payload) 확인가능.
     @PostMapping("/api/v3/login")
     public String login(@RequestBody UserDto userDto) {
-        log.info("\nAccount: " + userDto.getAccount() + " Password: " + userDto.getPassword());
+        System.out.println(userDto.getAccount() + " " + userDto.getPassword());
         Member member = memberLoginRepository.findByAccount(userDto.getAccount())
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 ACCOUNT 입니다."));
         if (!passwordEncoder.matches(userDto.getPassword(), member.getPassword())) {
             throw new IllegalArgumentException("잘못된 비밀번호입니다.");
         }
-        else
-            LOGGER.info("\n로그인 성공!");
+
+        ResponseEntity.ok().body("로그인 성공!.");
         return jwtTokenProvider.createToken(member.getUsername(), member.getRoles());
     }
 
-    //0809 Hayoon
-    //회원 수정
+
     @PutMapping("/api/v2/members/{id}")
     public UpdateMemberResponse updateMemberV2(@PathVariable("id") Long id,
                                                @RequestBody @Valid UpdateMemberDto updateMemberDto) {
         Member findMember = memberService.findOne(id);
         memberService.updateMember(findMember, updateMemberDto);
-        log.info("\n회원 [" + findMember.getName() + "]님 정보수정 완료!");
         return new UpdateMemberResponse(findMember.getEmail(),
                 findMember.getAddress(), findMember.getAccount(), findMember.getPwd(),
                 findMember.getUpdateDateTime());

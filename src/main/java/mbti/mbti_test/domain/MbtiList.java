@@ -1,5 +1,10 @@
 package mbti.mbti_test.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.Getter;
+
+@Getter
 public enum MbtiList {
 
     INTJ("일각고래"),
@@ -25,5 +30,6 @@ public enum MbtiList {
         this.whaleName = whaleName;
     }
 
+    @JsonValue
     public String whaleNameMethod() { return this.whaleName; }
 }

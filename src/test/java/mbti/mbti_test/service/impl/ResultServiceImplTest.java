@@ -71,16 +71,16 @@ class ResultServiceImplTest {
                 address4, "chj3331@naver.com", MemberStatus.NONUSER);
 
         WhaleCount whaleName = whaleCountRepository.findWhaleName(MbtiList.ENFJ.whaleNameMethod());
-        Result result = Result.createResult(member1, MbtiList.ENFJ, whaleName);
+        Result result = Result.createResult(member1, whaleName);
 
         WhaleCount whaleName1 = whaleCountRepository.findWhaleName(MbtiList.ENFJ.whaleNameMethod());
-        Result result1 = Result.createResult(member2, MbtiList.ENFJ, whaleName1);
+        Result result1 = Result.createResult(member2, whaleName1);
 
         WhaleCount whaleName3 = whaleCountRepository.findWhaleName(MbtiList.ENFP.whaleNameMethod());
-        Result result3 = Result.createResult(member3, MbtiList.ENFP, whaleName3);
+        Result result3 = Result.createResult(member3, whaleName3);
 
         WhaleCount whaleName4 = whaleCountRepository.findWhaleName(MbtiList.ISFJ.whaleNameMethod());
-        Result result4 = Result.createResult(member4, MbtiList.ISFJ, whaleName4);
+        Result result4 = Result.createResult(member4, whaleName4);
 
         WhaleCount one = whaleCountRepository.findOne(whaleName1.getId());
         one.getCount();
