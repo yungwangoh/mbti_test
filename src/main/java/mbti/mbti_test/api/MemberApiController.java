@@ -20,10 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.hibernate.tool.schema.SchemaToolingLogging.LOGGER;
@@ -116,6 +113,22 @@ public class MemberApiController {
                 findMember.getUpdateDateTime());
     }
 
+    //0810 Hayoon
+    //User 외 접근 제한을 걸어둔 리소스에 요청을 보내 결과 Response 확인
+    @PostMapping("/api/user/test")
+    public Map userResponseTest() {
+        Map<String, String> result = new HashMap<>();
+        result.put("result", "user ok");
+        return result;
+    }
+    //0810 Hayoon
+    //Admin 외 접근 제한을 걸어둔 리소스에 요청을 보내 결과 Response 확인
+    @PostMapping("/api/admin/test")
+    public Map adminResponseTest() {
+        Map<String, String> result = new HashMap<>();
+        result.put("result", "admin ok");
+        return result;
+    }
     @Data
     static class CreateMemberResponse {
         private Long createId;

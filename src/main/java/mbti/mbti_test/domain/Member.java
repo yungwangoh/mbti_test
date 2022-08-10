@@ -56,6 +56,7 @@ public class Member implements UserDetails {
 
     //0806 Hayoon
     @ElementCollection(fetch = FetchType.EAGER)
+    @Builder.Default
     private List<String> roles = new ArrayList<>();
 
     public Member(String name, String account, String pwd, Address address, String email, MemberStatus memberStatus) {

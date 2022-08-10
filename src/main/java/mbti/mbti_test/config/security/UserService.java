@@ -18,7 +18,6 @@ import java.util.Collections;
 public class UserService {
 
     private final MemberLoginRepository memberLoginRepository;
-    private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
 
     //회원가입
