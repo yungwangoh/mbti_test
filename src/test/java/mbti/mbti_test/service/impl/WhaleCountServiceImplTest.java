@@ -15,7 +15,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 @SpringBootTest
-@Transactional
+@Transactional(readOnly = true)
 class WhaleCountServiceImplTest {
 
     @Autowired

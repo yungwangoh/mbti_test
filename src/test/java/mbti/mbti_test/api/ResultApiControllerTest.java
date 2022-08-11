@@ -43,12 +43,6 @@ class ResultApiControllerTest {
 
         CreateWhaleCountDto createWhaleCountDto = new CreateWhaleCountDto(whaleCount);
 
-        Member findMember = memberService.findOne(17L);
-        CreateMemberDto createMemberDto = new CreateMemberDto(findMember);
-
-        ResultApiController.CreateResultSave resultApiController = new ResultApiController
-                .CreateResultSave(new CreateMemberDto(member), new CreateWhaleCountDto(whaleCount));
-
 
         ObjectMapper mapper = new ObjectMapper();
 

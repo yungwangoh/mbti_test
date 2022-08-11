@@ -7,6 +7,7 @@ import mbti.mbti_test.service.MemberService;
 import mbti.mbti_test.service.ResultService;
 import mbti.mbti_test.service.impl.WhaleAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,72 +21,14 @@ import java.util.List;
 @Transactional
 public class IntiDB {
 
-    private final InitDbService initDbService;
+    private final WhaleCountRepository whaleCountRepository;
+    private final EntityManager em;
 
-    @PostConstruct
-    public void Init() {
-        initDbService.유저가고른고래의수();
-    }
-
-    @Component
-    @Transactional
-    @RequiredArgsConstructor
-    static class InitDbService {
-        private final MemberService memberService;
-        private final WhaleCountRepository whaleCountRepository;
-        private final ResultService resultService;
-        private final WhaleAlgorithm whaleAlgorithm;
-
-        public void 유저가고른고래의수() {
-            List<WhaleCount> whaleCounts = whaleCountRepository.initWhaleMethod();
-            createMembers();
-            whaleAlgorithm.AllSharePoints(whaleCounts);
-        }
-
-        private void createMembers() {
-            Address address1 = getAddress("인천시", "문화로", "계원1동");
-            Address address2 = getAddress("서울시", "강남구", "일원1동");
-            Address address3 = getAddress("성남시", "분당구", "정자2동");
-            Address address4 = getAddress("대구광역시", "성동구", "동동1동");
-
-            Member member1 = createMember("윤광오", "qkfks1234", "1234",
-                    address1, "swager253@naver.com", MemberStatus.USER);
-            Member member2 = createMember("하윤", "gkdbssla97", "123456",
-                    address2, "gkdbssla97@naver.com", MemberStatus.NONUSER);
-            Member member3 = createMember("김경민", "rlarudals123", "4321",
-                    address3, "kkm1112@naver.com", MemberStatus.USER);
-            Member member4 = createMember("최용재", "chldydwo321", "654321",
-                    address4, "chj3331@naver.com", MemberStatus.NONUSER);
-
-            WhaleCount whaleName = whaleCountRepository.findWhaleName(MbtiList.ENFJ.whaleNameMethod());
-            Result result = Result.createResult(member1, whaleName);
-
-            WhaleCount whaleName1 = whaleCountRepository.findWhaleName(MbtiList.ENFJ.whaleNameMethod());
-            Result result1 = Result.createResult(member2, whaleName1);
-
-            WhaleCount whaleName3 = whaleCountRepository.findWhaleName(MbtiList.ENFP.whaleNameMethod());
-            Result result3 = Result.createResult(member3, whaleName3);
-
-            WhaleCount whaleName4 = whaleCountRepository.findWhaleName(MbtiList.ISFJ.whaleNameMethod());
-            Result result4 = Result.createResult(member4, whaleName4);
-
-            WhaleCount one = whaleCountRepository.findOne(whaleName1.getId());
-            one.getCount();
-            resultService.ResultJoin(result);
-            resultService.ResultJoin(result1);
-            resultService.ResultJoin(result3);
-            resultService.ResultJoin(result4);
-
-        }
-
-        private Address getAddress(String city, String street, String zipcode) {
-            return new Address(city, street, zipcode);
-        }
-
-        private Member createMember(String name, String account, String pwd, Address address, String email, MemberStatus memberStatus) {
-            Member member = new Member(name, account, pwd, address, email, memberStatus);
-            memberService.join(member);
-            return member;
-        }
+    @Bean
+    public void init() {
+        List<WhaleCount> whaleCounts = whaleCountRepository.initWhaleMethod();
+        whaleCounts.forEach(whaleCount -> {
+            em.persist(whaleCount);
+        });
     }
 }
