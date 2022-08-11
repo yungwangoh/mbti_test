@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import mbti.mbti_test.config.security.UserService;
-import mbti.mbti_test.dto.UserDto;
+import mbti.mbti_test.dto.UserLoginDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import mbti.mbti_test.config.security.JwtTokenProvider;
@@ -14,15 +14,12 @@ import mbti.mbti_test.dto.UpdateMemberDto;
 import mbti.mbti_test.domain.Address;
 import mbti.mbti_test.domain.Member;
 import mbti.mbti_test.service.MemberService;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.function.EntityResponse;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 //0803 hayoon
@@ -75,9 +72,18 @@ public class MemberApiController {
     @PostMapping("/api/v3/join")
     public ResponseEntity saveMemberV3(@RequestBody CreateMemberDto createMemberDto) {
         Long memberId = userService.join(createMemberDto);
+//        if memberLoginRepository.findById(createMemberDto.getId()) != null {
+//            throw new MemberAlreadyExistException();
+//        }
+
+//        Long memberId = userService.join(createMemberDto);
+//        return memberId;
+
         return memberId != null ?
                 ResponseEntity.ok().body("회원가입을 축하합니다.") :
                 ResponseEntity.badRequest().build();
+
+
     }
     /**
      * {
@@ -98,7 +104,7 @@ public class MemberApiController {
     //0808 Hayoon
     //https://jwt.io/ 에서 Encoder -> Decoder(Payload) 확인가능.
     @PostMapping("/api/v3/login")
-    public String login(@RequestBody UserDto userDto) {
+    public String login(@RequestBody UserLoginDto userDto) {
         System.out.println(userDto.getAccount() + " " + userDto.getPassword());
         Member member = memberLoginRepository.findByAccount(userDto.getAccount())
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 ACCOUNT 입니다."));
@@ -121,6 +127,22 @@ public class MemberApiController {
                 findMember.getUpdateDateTime());
     }
 
+    //0810 Hayoon
+    //User 외 접근 제한을 걸어둔 리소스에 요청을 보내 결과 Response 확인
+    @PostMapping("/api/user/test")
+    public Map userResponseTest() {
+        Map<String, String> result = new HashMap<>();
+        result.put("result", "user ok");
+        return result;
+    }
+    //0810 Hayoon
+    //Admin 외 접근 제한을 걸어둔 리소스에 요청을 보내 결과 Response 확인
+    @PostMapping("/api/admin/test")
+    public Map adminResponseTest() {
+        Map<String, String> result = new HashMap<>();
+        result.put("result", "admin ok");
+        return result;
+    }
     @Data
     static class CreateMemberResponse {
         private Long createId;
