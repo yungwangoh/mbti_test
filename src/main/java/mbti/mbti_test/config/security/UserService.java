@@ -5,8 +5,6 @@ import mbti.mbti_test.config.security.user.MemberLoginRepository;
 import mbti.mbti_test.domain.Member;
 import mbti.mbti_test.domain.MemberStatus;
 import mbti.mbti_test.dto.CreateMemberDto;
-import mbti.mbti_test.dto.UserDto;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

@@ -3,15 +3,15 @@ package mbti.mbti_test.dto;
 import lombok.Getter;
 
 @Getter
-public class UserDto {
+public class UserLoginDto {
 
     private String account;
     private String password;
 
-    public UserDto() {
+    public UserLoginDto() {
     }
 
-    public UserDto(String account, String password) {
+    public UserLoginDto(String account, String password) {
         this.account = account;
         this.password = password;
     }

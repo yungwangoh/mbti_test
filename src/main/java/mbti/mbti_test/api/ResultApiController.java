@@ -92,7 +92,7 @@ public class ResultApiController {
 
         Member findMember = memberService.findOne(createMemberDto.getId());
         WhaleCount whaleNameMbti = whaleCountService.findWhaleNameMbti(mbtiList.whaleNameMethod());
-        Result result = Result.createResult(findMember, mbtiList, whaleNameMbti);
+        Result result = Result.createResult(findMember, whaleNameMbti);
         Long crateResultId = resultService.ResultJoin(result);
 
         return new CreateResultResponse(crateResultId);

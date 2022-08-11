@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -92,7 +93,7 @@ public class IntiDB {
         private Member createMember(String name, String account, String pwd, Address address, String email, MemberStatus memberStatus) {
             //0808 Hayoon
             //memberService->userService로 변경
-            Long memberId = userService.join(new CreateMemberDto(name, account, pwd, address, email));
+            Long memberId = userService.join(new CreateMemberDto(name, account, pwd, address, email, memberStatus, LocalDateTime.now()));
             return memberRepository.findOne(memberId);
         }
     }
