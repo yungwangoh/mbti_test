@@ -27,13 +27,15 @@ public class WhaleCountRepositoryImpl implements WhaleCountRepository {
 
     @Override
     public List<WhaleCount> findMaxOne() {
-        return em.createQuery("select max (w.count) from WhaleCount w", WhaleCount.class)
+        return em.createQuery("select w from WhaleCount w where " +
+                        " w.count = (select max(w.count) from WhaleCount w)", WhaleCount.class)
                 .getResultList();
     }
 
     @Override
     public List<WhaleCount> findMinOne() {
-        return em.createQuery("select min (w.count) from WhaleCount w", WhaleCount.class)
+        return em.createQuery("select w from WhaleCount w where " +
+                        " w.count = (select min(w.count) from WhaleCount w)", WhaleCount.class)
                 .getResultList();
     }
 
@@ -78,15 +80,7 @@ public class WhaleCountRepositoryImpl implements WhaleCountRepository {
                 new WhaleCount("혹등고래", 0)
         );
 
-        int value = 100, sum = 0;
-        for (WhaleCount whaleCount : whaleCounts) {
-            for (int i = 10; i < value; i++)
-                whaleCount.whaleCountValue();
-            save(whaleCount);
-            value--;
-        }
         return whaleCounts;
-        // Max_Value
     }
 }
 

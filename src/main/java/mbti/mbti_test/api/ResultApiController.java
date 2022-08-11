@@ -1,11 +1,9 @@
 package mbti.mbti_test.api;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import mbti.mbti_test.dto.CreateMemberDto;
 import mbti.mbti_test.dto.CreateResultDto;
 import mbti.mbti_test.dto.CreateWhaleCountDto;
-import mbti.mbti_test.domain.MbtiList;
 import mbti.mbti_test.domain.Member;
 import mbti.mbti_test.domain.Result;
 import mbti.mbti_test.domain.WhaleCount;
@@ -51,33 +49,40 @@ public class ResultApiController {
         return resultDtos;
     }
 
-    @GetMapping("/api/algorithm/result")
-    public MbtiList changeMbtiEnumToString(@RequestParam(value = "iCount") int iCount, @RequestParam(value = "eCount") int eCount,
-                                          @RequestParam(value = "sCount") int sCount, @RequestParam(value = "nCount") int nCount,
-                                          @RequestParam(value = "tCount") int tCount, @RequestParam(value = "fCount") int fCount,
-                                          @RequestParam(value = "pCount") int pCount, @RequestParam(value = "jCount") int jCount) {
+    @PostMapping("/api/algorithm/result")
+    public List<CreateWhaleCountDto> changeMbtiEnumToString(@RequestBody @Valid WhaleAlgorithm whaleAlgorithm) {
 
-        WhaleAlgorithm whaleAlgorithm = new WhaleAlgorithm(iCount, eCount, sCount, nCount, tCount, fCount, pCount, jCount);
+        WhaleAlgorithm algorithm = new WhaleAlgorithm(whaleAlgorithm);
+
         //0806 Hayoon
         //isString으로 되어있어서 ieString으로 변수명 변경함.
-        String ieString = whaleAlgorithm.ieSelect(iCount, eCount);
-        String snString = whaleAlgorithm.snSelect(sCount, nCount);
-        String tfString = whaleAlgorithm.tfSelect(tCount, fCount);
-        String pjString = whaleAlgorithm.pjSelect(pCount, jCount);
+        String ieString = algorithm.ieSelect();
+        String snString = algorithm.snSelect();
+        String tfString = algorithm.tfSelect();
+        String pjString = algorithm.pjSelect();
 
-        return resultService.mbtiChangeEnum(whaleAlgorithm.mbtiCombination(ieString, snString, tfString, pjString));
-    }
-    //0808 Hayoon
-    //@PostMapping("/api/v3/user-results/{memberId}")
-    //public List<CreateWhaleCountDto> userResult(@PathVariable("memberId") Long memberId) {
-    @PostMapping("/api/v3/user-results")
-    public List<CreateWhaleCountDto> userResult(@RequestBody Long memberId) {
+        String whaleName = resultService.mbtiChangeEnum(algorithm.mbtiCombination(ieString, snString, tfString, pjString))
+                .whaleNameMethod();
+
         List<WhaleCount> whaleCounts = new ArrayList<>();
-        List<Result> memberResultService = resultService.findMemberResultService(memberId);
+        whaleCounts.add(whaleCountService.findWhaleNameMbti(whaleName));
 
-        for(Result result : memberResultService) {
+        List<CreateWhaleCountDto> whaleCountDtos = whaleCounts.stream()
+                .map(whaleCount -> new CreateWhaleCountDto(whaleCount))
+                .collect(toList());
+
+        return whaleCountDtos;
+    }
+
+    @PostMapping("/api/history/result")
+    public List<CreateWhaleCountDto> userResultHistory(@RequestBody @Valid CreateMemberDto createMemberDto) {
+
+        List<WhaleCount> whaleCounts = new ArrayList<>();
+        List<Result> memberResultService = resultService.findMemberResultService(createMemberDto.getId());
+
+        memberResultService.forEach(result -> {
             whaleCounts.add(result.getWhaleCount());
-        }
+        });
 
         List<CreateWhaleCountDto> whaleCountDtos = whaleCounts.stream()
                 .map(whaleCount -> new CreateWhaleCountDto(whaleCount))
@@ -87,11 +92,9 @@ public class ResultApiController {
     }
 
     @PostMapping("/api/create/result")
-    public CreateResultResponse saveResultV2(@RequestBody @Valid CreateMemberDto createMemberDto,
-                                             @RequestBody @Valid MbtiList mbtiList) {
-
-        Member findMember = memberService.findOne(createMemberDto.getId());
-        WhaleCount whaleNameMbti = whaleCountService.findWhaleNameMbti(mbtiList.whaleNameMethod());
+    public CreateResultResponse saveResultV2(@RequestBody @Valid CreateResultSave createResultSave) {
+        Member findMember = memberService.findOne(createResultSave.createMemberDto.getId());
+        WhaleCount whaleNameMbti = whaleCountService.findWhaleNameMbti(createResultSave.createWhaleCountDto.getWhaleName());
         Result result = Result.createResult(findMember, whaleNameMbti);
         Long crateResultId = resultService.ResultJoin(result);
 
@@ -99,6 +102,19 @@ public class ResultApiController {
     }
 
     @Data
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    static class CreateResultSave {
+        private CreateMemberDto createMemberDto;
+        private CreateWhaleCountDto createWhaleCountDto;
+
+        public CreateResultSave(CreateMemberDto createMemberDto, CreateWhaleCountDto createWhaleCountDto) {
+            this.createMemberDto = createMemberDto;
+            this.createWhaleCountDto = createWhaleCountDto;
+        }
+    }
+
+    @Data
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     static class CreateResultResponse {
         private Long resultId;
 

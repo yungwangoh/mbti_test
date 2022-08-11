@@ -1,24 +1,21 @@
 package mbti.mbti_test.service.impl;
 
+import mbti.mbti_test.dto.CreateWhaleCountDto;
 import mbti.mbti_test.domain.MbtiList;
 import mbti.mbti_test.domain.WhaleCount;
 import mbti.mbti_test.repository.WhaleCountRepository;
 import mbti.mbti_test.service.WhaleCountService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
-@Transactional
+@Transactional(readOnly = true)
 class WhaleCountServiceImplTest {
 
     @Autowired
@@ -62,13 +59,14 @@ class WhaleCountServiceImplTest {
     }
 
     @Test
-    @Rollback(value = false)
-    public void 고래16마리초기화() {
-        whaleCountRepository.initWhaleMethod();
+    public void 고래궁합() {
+        WhaleCount 일각고래 = whaleCountRepository.findWhaleName("상괭이");
+        CreateWhaleCountDto createWhaleCountDto = new CreateWhaleCountDto(일각고래);
 
-        List<WhaleCount> findWhales = whaleCountRepository.findAll();
-        findWhales.forEach(whaleCount -> {
-            System.out.println("whaleCount.name = " + whaleCount.getName());
+        List<WhaleCount> whaleCounts = whaleCountService.whaleCompatibility(createWhaleCountDto);
+
+        whaleCounts.forEach(e -> {
+            System.out.println("e.getName() = " + e.getName());
         });
     }
 }

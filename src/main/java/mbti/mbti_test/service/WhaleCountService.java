@@ -1,5 +1,6 @@
 package mbti.mbti_test.service;
 
+import mbti.mbti_test.dto.CreateWhaleCountDto;
 import mbti.mbti_test.domain.WhaleCount;
 
 import java.util.List;
@@ -17,6 +18,8 @@ public interface WhaleCountService {
     List<WhaleCount> maxWhaleNameShare();
 
     List<WhaleCount> minWhaleNameShare();
+
+    List<WhaleCount> whaleCompatibility(CreateWhaleCountDto createWhaleCountDto);
 
     List<WhaleCount> findAll();
 }

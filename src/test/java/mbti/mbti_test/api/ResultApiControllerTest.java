@@ -3,12 +3,13 @@ package mbti.mbti_test.api;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import mbti.mbti_test.Dto.CreateMemberDto;
-import mbti.mbti_test.Dto.CreateWhaleCountDto;
+import mbti.mbti_test.dto.CreateMemberDto;
+import mbti.mbti_test.dto.CreateWhaleCountDto;
 import mbti.mbti_test.domain.Address;
 import mbti.mbti_test.domain.Member;
 import mbti.mbti_test.domain.MemberStatus;
 import mbti.mbti_test.domain.WhaleCount;
+import mbti.mbti_test.service.MemberService;
 import mbti.mbti_test.service.ResultService;
 import mbti.mbti_test.service.WhaleCountService;
 import org.junit.jupiter.api.Test;
@@ -16,16 +17,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @Transactional
 class ResultApiControllerTest {
 
     @Autowired
+    ResultService resultService;
+
+    @Autowired
+    MemberService memberService;
+
+    @Autowired
     WhaleCountService whaleCountService;
+
+    @Autowired
+    ResultApiController resultApiController;
 
     @Test
     public void jsonTest() throws JsonProcessingException { // 객체를 Json 형식으로 Convert;
@@ -35,8 +41,8 @@ class ResultApiControllerTest {
 
         WhaleCount whaleCount = whaleCountService.findWhaleNameMbti("범고래");
 
-        ResultApiController.CreateResultSave resultApiController = new ResultApiController
-                .CreateResultSave(new CreateMemberDto(member), new CreateWhaleCountDto(whaleCount));
+        CreateWhaleCountDto createWhaleCountDto = new CreateWhaleCountDto(whaleCount);
+
 
         ObjectMapper mapper = new ObjectMapper();
 

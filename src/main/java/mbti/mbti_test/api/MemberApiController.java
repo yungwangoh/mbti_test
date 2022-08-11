@@ -3,6 +3,8 @@ package mbti.mbti_test.api;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import mbti.mbti_test.dto.CreateMemberDto;
+import mbti.mbti_test.dto.UpdateMemberDto;
 import mbti.mbti_test.config.security.UserService;
 import mbti.mbti_test.dto.UserLoginDto;
 import org.springframework.http.ResponseEntity;

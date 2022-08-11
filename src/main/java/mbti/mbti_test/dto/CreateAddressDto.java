@@ -4,6 +4,7 @@ import lombok.Data;
 import mbti.mbti_test.domain.Address;
 
 @Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CreateAddressDto {
 
     private String city;
