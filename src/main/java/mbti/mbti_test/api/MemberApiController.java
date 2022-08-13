@@ -4,7 +4,7 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import mbti.mbti_test.dto.CreateMemberDto;
 import mbti.mbti_test.dto.UpdateMemberDto;
-import mbti.mbti_test.repository.impl.MemberServiceImpl;
+import mbti.mbti_test.service.impl.MemberServiceImpl;
 import mbti.mbti_test.dto.UserLoginDto;
 import mbti.mbti_test.exception.MemberAlreadyExistException;
 import org.springframework.http.ResponseEntity;

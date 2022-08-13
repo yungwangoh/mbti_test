@@ -1,4 +1,4 @@
-package mbti.mbti_test.repository.impl;
+package mbti.mbti_test.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import mbti.mbti_test.config.security.user.MemberLoginRepository;
@@ -21,6 +21,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
+//0813 Hayoon
+//UserService -> MemberSerivceImpl로 새로 교체
 public class MemberServiceImpl implements MemberService {
 
     private final MemberLoginRepository memberLoginRepository;
