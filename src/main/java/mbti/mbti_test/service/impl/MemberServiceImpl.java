@@ -71,7 +71,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void updateMember(Member findMember, UpdateMemberDto updateMemberDto) {
         Member member  = memberRepository.findOne(findMember.getId());
-        member.updateMember(updateMemberDto.getAccount(), updateMemberDto.getPwd(),
+        member.updateMember(updateMemberDto.getAccount(), passwordEncoder.encode(updateMemberDto.getPwd()),
                 updateMemberDto.getAddress(), updateMemberDto.getEmail());
     }
 
