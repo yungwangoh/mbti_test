@@ -1,10 +1,11 @@
 package mbti.mbti_test.exception;
 
+//0813 Hayoon
+//회원가입중복 예외처리 생성
 public class MemberAlreadyExistException extends Throwable {
 
     public MemberAlreadyExistException() {
     }
-
     public MemberAlreadyExistException(String message) {
         super(message);
     }
