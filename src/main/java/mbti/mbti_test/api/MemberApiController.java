@@ -1,23 +1,20 @@
 package mbti.mbti_test.api;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import mbti.mbti_test.dto.CreateMemberDto;
 import mbti.mbti_test.dto.UpdateMemberDto;
-import mbti.mbti_test.config.security.UserService;
+import mbti.mbti_test.repository.impl.MemberServiceImpl;
 import mbti.mbti_test.dto.UserLoginDto;
+import mbti.mbti_test.exception.MemberAlreadyExistException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import mbti.mbti_test.config.security.JwtTokenProvider;
 import mbti.mbti_test.config.security.user.MemberLoginRepository;
-import mbti.mbti_test.dto.CreateMemberDto;
-import mbti.mbti_test.dto.UpdateMemberDto;
 import mbti.mbti_test.domain.Address;
 import mbti.mbti_test.domain.Member;
 import mbti.mbti_test.service.MemberService;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.function.EntityResponse;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -27,13 +24,14 @@ import java.util.stream.Collectors;
 //0803 hayoon
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class MemberApiController {
 
     private final MemberService memberService;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final MemberLoginRepository memberLoginRepository;
-    private final UserService userService;
+    private final MemberServiceImpl memberServiceImpl;
 
 
     @GetMapping("/api/v2/members")
@@ -72,18 +70,16 @@ public class MemberApiController {
 
     //회원가입
     @PostMapping("/api/v3/join")
-    public ResponseEntity saveMemberV3(@RequestBody CreateMemberDto createMemberDto) {
-        Long memberId = userService.join(createMemberDto);
-//        if memberLoginRepository.findById(createMemberDto.getId()) != null {
-//            throw new MemberAlreadyExistException();
-//        }
+    public CreateMemberResponse saveMemberV3(@RequestBody CreateMemberDto createMemberDto)
+            throws MemberAlreadyExistException {
+        Long memberId = memberServiceImpl.join(createMemberDto);
 
-//        Long memberId = userService.join(createMemberDto);
-//        return memberId;
+        log.info("\nmemberId: " + memberId + " memberDtoName: " + createMemberDto.getName());
+        return new CreateMemberResponse(memberId, createMemberDto.getName());
 
-        return memberId != null ?
-                ResponseEntity.ok().body("회원가입을 축하합니다.") :
-                ResponseEntity.badRequest().build();
+//        return memberId != null ?
+//                ResponseEntity.ok().body("회원가입을 축하합니다.") :
+//                ResponseEntity.badRequest().build();
 
 
     }
@@ -102,6 +98,7 @@ public class MemberApiController {
      * @param userDto
      * @return
      */
+
     // 로그인
     //0808 Hayoon
     //https://jwt.io/ 에서 Encoder -> Decoder(Payload) 확인가능.
@@ -118,7 +115,8 @@ public class MemberApiController {
         return jwtTokenProvider.createToken(member.getUsername(), member.getRoles());
     }
 
-
+    // 회원정보 수정
+    //0813 Hayoon
     @PutMapping("/api/v2/members/{id}")
     public UpdateMemberResponse updateMemberV2(@PathVariable("id") Long id,
                                                @RequestBody @Valid UpdateMemberDto updateMemberDto) {
@@ -146,21 +144,35 @@ public class MemberApiController {
         return result;
     }
     @Data
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     static class CreateMemberResponse {
         private Long createId;
-        public CreateMemberResponse(Long id) {
-            this.createId = id;
+        private String name;
+
+        public CreateMemberResponse(Long createId, String name) {
+            this.createId = createId;
+            this.name = name;
         }
     }
 
     @Data
-    @AllArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     static class UpdateMemberResponse {
         private String email;
         private Address address;
         private String account;
         private String pwd;
         private LocalDateTime updateDateTime;
+
+        public UpdateMemberResponse(String email, Address address,
+                                    String account, String pwd,
+                                    LocalDateTime updateDateTime) {
+            this.email = email;
+            this.address = address;
+            this.account = account;
+            this.pwd = pwd;
+            this.updateDateTime = updateDateTime;
+        }
     }
 }
 

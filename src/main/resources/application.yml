@@ -1,9 +1,21 @@
 spring:
   datasource:
-    url: jdbc:h2:tcp://localhost/~/m_test
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    #url: jdbc:h2:tcp://localhost/~/m_test
+    #username: sa
+    #password:
+    #driver-class-name: org.h2.Driver
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/mbti?serverTimezone=UTC&characterEncoding=UTF-8
+    username: admin
+    password: Abcd123!
+    hikari:
+      pool-name: SpringBootJPAHikariCP
+      maximum-pool-size: 2
+      idle-timeout: 10000
+      connection-timeout: 10000
+      validation-timeout: 10000
+      max-lifetime: 28770000
+      connection-init-sql: set wait_timeout = 600
   jpa:
     hibernate:
       ddl-auto: create
