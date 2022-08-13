@@ -33,24 +33,7 @@ public class MemberApiController {
     private final MemberLoginRepository memberLoginRepository;
     private final MemberServiceImpl memberServiceImpl;
 
-
     @GetMapping("/api/v2/members")
-    public List<CreateMemberDto> memberV2() {
-        List<Member> findMembers = memberService.findMembers();
-        List<CreateMemberDto> memberDtos = findMembers.stream()
-                .map(m -> new CreateMemberDto(m))
-                .collect(Collectors.toList());
-        return memberDtos;
-    }
-
-    //0808 Hayoon
-    //Data JPA 미구현.
-    @GetMapping("/api/v3/members")
-    public List<Member> findAllUser() {
-        return memberLoginRepository.findAll();
-    }
-
-    @GetMapping("/api/v2.1/members")
     public List<CreateMemberDto> memberV2_1() {
         List<Member> members = memberService.findMembers();
 
@@ -80,8 +63,6 @@ public class MemberApiController {
 //        return memberId != null ?
 //                ResponseEntity.ok().body("회원가입을 축하합니다.") :
 //                ResponseEntity.badRequest().build();
-
-
     }
     /**
      * {
@@ -111,7 +92,7 @@ public class MemberApiController {
             throw new IllegalArgumentException("잘못된 비밀번호입니다.");
         }
 
-        ResponseEntity.ok().body("로그인 성공!.");
+        log.info("로그인 성공!");
         return jwtTokenProvider.createToken(member.getUsername(), member.getRoles());
     }
 

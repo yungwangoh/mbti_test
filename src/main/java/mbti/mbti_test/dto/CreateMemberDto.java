@@ -1,6 +1,7 @@
 package mbti.mbti_test.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.Collections;
 @Data
 public class CreateMemberDto {
 
+    @JsonIgnore
     private Long id;
 
     @NotEmpty(message = "회원 이름은 필수입니다.")
@@ -31,6 +33,7 @@ public class CreateMemberDto {
     @NotEmpty(message = "아이디는 필수입니다.")
     private String account;
 
+    @JsonIgnore
     @NotEmpty(message = "비밀번호는 필수입니다.")
     private String pwd;
 
@@ -64,5 +67,7 @@ public class CreateMemberDto {
         this.account = member.getAccount();
         this.pwd = member.getPwd();
         this.memberStatus = member.getMemberStatus();
+        this.updateDateTime = member.getUpdateDateTime();
+        this.createDateTime = member.getCreateDateTime();
     }
 }
