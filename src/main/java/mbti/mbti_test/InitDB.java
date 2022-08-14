@@ -3,25 +3,18 @@ package mbti.mbti_test;
 import lombok.RequiredArgsConstructor;
 import mbti.mbti_test.domain.*;
 import mbti.mbti_test.repository.WhaleCountRepository;
-import mbti.mbti_test.service.MemberService;
-import mbti.mbti_test.service.ResultService;
-import mbti.mbti_test.service.impl.WhaleAlgorithm;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 // API를 테스트하기위한 DB데이터 초기화
 @Component
 @RequiredArgsConstructor
 @Transactional
-public class IntiDB {
+public class InitDB {
 
     private final WhaleCountRepository whaleCountRepository;
     private final EntityManager em;
