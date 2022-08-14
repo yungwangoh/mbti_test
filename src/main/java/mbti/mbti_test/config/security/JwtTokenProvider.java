@@ -21,7 +21,7 @@ import java.util.List;
 @Component
 public class JwtTokenProvider {
 
-    private String secretKey = "mbti_test";
+    private String secretKey = "mbti";
 
     //토큰 유효시간 60분
     private long tokenValidTime = 60 * 60 * 1000L; // 1시간만 토큰 유효

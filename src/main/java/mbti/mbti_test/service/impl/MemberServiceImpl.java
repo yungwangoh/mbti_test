@@ -81,7 +81,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void userValidation(CreateMemberDto createMemberDto) throws MemberAlreadyExistException {
         Optional<Member> findByName = memberLoginRepository.findByAccount(createMemberDto.getAccount());
-        if (!findByName.isEmpty()) {
+        if (findByName.isPresent()) {
             throw new MemberAlreadyExistException("이미 존재하는 회원입니다.");
         }
     }

@@ -1,6 +1,8 @@
 package mbti.mbti_test.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -35,6 +37,7 @@ public class Member implements UserDetails {
 
     @NotEmpty(message = "비밀번호는 필수입니다.")
     @Column(length = 300, nullable = false)
+    @JsonIgnore
     private String pwd; //회원 PWD
 
     @Embedded
