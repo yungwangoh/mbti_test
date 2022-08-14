@@ -7,6 +7,7 @@ import mbti.mbti_test.dto.UpdateMemberDto;
 import mbti.mbti_test.service.impl.MemberServiceImpl;
 import mbti.mbti_test.dto.UserLoginDto;
 import mbti.mbti_test.exception.MemberAlreadyExistException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import mbti.mbti_test.config.security.JwtTokenProvider;
@@ -31,10 +32,10 @@ public class MemberApiController {
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final MemberLoginRepository memberLoginRepository;
-    private final MemberServiceImpl memberServiceImpl;
+    @Autowired private final MemberServiceImpl memberServiceImpl;
 
     @GetMapping("/api/v2/members")
-    public List<CreateMemberDto> memberV2_1() {
+    public List<CreateMemberDto> memberV2() {
         List<Member> members = memberService.findMembers();
 
         List<CreateMemberDto> createMemberDtos = members.stream()
@@ -92,7 +93,7 @@ public class MemberApiController {
             throw new IllegalArgumentException("잘못된 비밀번호입니다.");
         }
 
-        log.info("로그인 성공!");
+        log.info("\n로그인 성공!");
         return jwtTokenProvider.createToken(member.getUsername(), member.getRoles());
     }
 

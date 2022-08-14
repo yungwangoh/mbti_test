@@ -2,8 +2,10 @@ package mbti.mbti_test.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Data;
+
 import lombok.NoArgsConstructor;
 import mbti.mbti_test.domain.Address;
 import mbti.mbti_test.domain.Member;
@@ -12,13 +14,13 @@ import mbti.mbti_test.domain.MemberStatus;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.NotEmpty;
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Collections;
 
 //0803 hayoon
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Data
-public class CreateMemberDto {
+public class CreateMemberDto implements Serializable {
 
     @JsonIgnore
     private Long id;
@@ -33,8 +35,10 @@ public class CreateMemberDto {
     @NotEmpty(message = "아이디는 필수입니다.")
     private String account;
 
-    @JsonIgnore
     @NotEmpty(message = "비밀번호는 필수입니다.")
+    //0814 Hayoon
+    // 전체회원 조회 시(Get Method), 회원 Password 비공개
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String pwd;
 
     @Enumerated(value = EnumType.STRING)
@@ -48,16 +52,15 @@ public class CreateMemberDto {
 
     //private List<MemberFileDto> fileList;
     public CreateMemberDto(String name, String account, String pwd,
-                           Address address, String email,
-                           MemberStatus memberStatus, LocalDateTime createDateTime) { // 객체로 파라미터로 넘기는게 더 좋아보임.
+                           Address address, String email) { // 객체로 파라미터로 넘기는게 더 좋아보임.
         this.name = name;
         this.account = account;
         this.pwd = pwd;
         this.address = address;
         this.email = email;
-        this.memberStatus = memberStatus;
-        this.createDateTime = createDateTime;
-        this.updateDateTime = createDateTime;
+        this.memberStatus = MemberStatus.USER;
+        this.createDateTime = LocalDateTime.now();
+        this.updateDateTime = LocalDateTime.now();
     }
 
     public CreateMemberDto(Member member) { // createResultDto에 쓰일 CreateMemberDto 생성 0804.
