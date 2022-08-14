@@ -1,5 +1,6 @@
 package mbti.mbti_test.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import mbti.mbti_test.domain.Result;
 
@@ -11,14 +12,15 @@ import java.time.LocalDateTime;
 public class CreateResultDto {
 
     private Long resultId;
-    private LocalDateTime resultDate;
-    private CreateMemberDto member;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime testDate;
 
+    private CreateMemberDto member;
     private CreateWhaleCountDto whale;
 
     public CreateResultDto(Result result) {
         this.resultId = result.getId();
-        this.resultDate = result.getTestTime();
+        this.testDate = result.getTestTime();
         this.member = new CreateMemberDto(result.getMember());
         this.whale = new CreateWhaleCountDto(result.getWhaleCount());
     }

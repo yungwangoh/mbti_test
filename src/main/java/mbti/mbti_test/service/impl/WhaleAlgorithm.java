@@ -40,6 +40,12 @@ public class WhaleAlgorithm {
     @NotNull
     private int jCount;
 
+    private List<WhaleCount> whaleCounts;
+
+    public WhaleAlgorithm(List<WhaleCount> whaleCounts) {
+        this.whaleCounts = whaleCounts;
+    }
+
     public WhaleAlgorithm(WhaleAlgorithm whaleAlgorithm) {
         this.iCount = whaleAlgorithm.getICount();
         this.eCount = whaleAlgorithm.getECount();
