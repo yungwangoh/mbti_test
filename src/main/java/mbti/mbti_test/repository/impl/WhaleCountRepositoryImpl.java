@@ -3,6 +3,7 @@ package mbti.mbti_test.repository.impl;
 import lombok.RequiredArgsConstructor;
 import mbti.mbti_test.domain.WhaleCount;
 import mbti.mbti_test.repository.WhaleCountRepository;
+import mbti.mbti_test.service.impl.WhaleAlgorithm;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;

@@ -85,7 +85,7 @@ public class MemberApiController {
     //0808 Hayoon
     //https://jwt.io/ 에서 Encoder -> Decoder(Payload) 확인가능.
     @PostMapping("/api/v3/login")
-    public String login(@RequestBody UserLoginDto userDto) {
+    public String login(@RequestBody @Valid UserLoginDto userDto) {
         System.out.println(userDto.getAccount() + " " + userDto.getPassword());
         Member member = memberLoginRepository.findByAccount(userDto.getAccount())
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 ACCOUNT 입니다."));

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import mbti.mbti_test.dto.CreateWhaleCountDto;
 import mbti.mbti_test.domain.WhaleCount;
 import mbti.mbti_test.service.WhaleCountService;
+import mbti.mbti_test.service.impl.WhaleAlgorithm;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +20,7 @@ import static java.util.stream.Collectors.*;
 public class WhaleCountApiController { //0805 ygo 생성
 
     private final WhaleCountService whaleCountService;
+    private final WhaleAlgorithm whaleAlgorithm;
 
     @GetMapping("/api/v2/whale-lists")
     public List<CreateWhaleCountDto> whaleCountListV2() {
@@ -26,6 +28,20 @@ public class WhaleCountApiController { //0805 ygo 생성
         List<WhaleCount> whaleList = whaleCountService.findAll();
 
         List<CreateWhaleCountDto> whaleCountDtos = whaleList.stream()
+                .map(whaleCount -> new CreateWhaleCountDto(whaleCount))
+                .collect(toList());
+
+        return whaleCountDtos;
+    }
+
+    @GetMapping("/api/whila-list/share")
+    public List<CreateWhaleCountDto> whaleCountListShare() {
+
+        whaleAlgorithm.AllSharePoints(whaleCountService.findAll());
+
+        List<WhaleCount> whaleCountList = whaleCountService.findAll();
+
+        List<CreateWhaleCountDto> whaleCountDtos = whaleCountList.stream()
                 .map(whaleCount -> new CreateWhaleCountDto(whaleCount))
                 .collect(toList());
 

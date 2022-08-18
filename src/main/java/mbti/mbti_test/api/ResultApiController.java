@@ -1,7 +1,6 @@
 package mbti.mbti_test.api;
 
 import lombok.*;
-import mbti.mbti_test.InitDB;
 import mbti.mbti_test.dto.CreateMemberDto;
 import mbti.mbti_test.dto.CreateResultDto;
 import mbti.mbti_test.dto.CreateWhaleCountDto;
@@ -15,6 +14,7 @@ import mbti.mbti_test.service.impl.WhaleAlgorithm;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +28,7 @@ public class ResultApiController {
     private final ResultService resultService;
     private final WhaleCountService whaleCountService;
     private final WhaleAlgorithm whaleAlgorithm;
+
 
     @GetMapping("/api/v2/result")
     public List<CreateResultDto> resultV2() {
@@ -76,21 +77,22 @@ public class ResultApiController {
         return whaleCountDtos;
     }
 
+    // 0818 리팩토링
     @PostMapping("/api/history/result")
-    public List<CreateWhaleCountDto> userResultHistory(@RequestBody @Valid CreateMemberDto createMemberDto) {
+    public List<CreateResultHistory> userResultHistory(@RequestBody @Valid CreateMemberDto createMemberDto) {
 
-        List<WhaleCount> whaleCounts = new ArrayList<>();
+        List<Result> resultListHistory = new ArrayList<>();
         List<Result> memberResultService = resultService.findMemberResultService(createMemberDto.getId());
 
         memberResultService.forEach(result -> {
-            whaleCounts.add(result.getWhaleCount());
+            resultListHistory.add(result);
         });
 
-        List<CreateWhaleCountDto> whaleCountDtos = whaleCounts.stream()
-                .map(whaleCount -> new CreateWhaleCountDto(whaleCount))
+        List<CreateResultHistory> resultHistories = resultListHistory.stream()
+                .map(result -> new CreateResultHistory(result))
                 .collect(toList());
 
-        return whaleCountDtos;
+        return resultHistories;
     }
 
     //0814 Hayoon
@@ -117,6 +119,8 @@ public class ResultApiController {
         Member findMember = memberService.findOne(createResultSave.createMemberDto.getId());
         WhaleCount whaleNameMbti = whaleCountService.findWhaleNameMbti(createResultSave.createWhaleCountDto.getWhaleName());
         Result result = Result.createResult(findMember, whaleNameMbti);
+        whaleAlgorithm.AllSharePoints(whaleCountService.findAll());
+
         Long crateResultId = resultService.ResultJoin(result);
 
         return new CreateResultResponse(crateResultId);
@@ -154,6 +158,19 @@ public class ResultApiController {
         public CreateResultSave(CreateMemberDto createMemberDto, CreateWhaleCountDto createWhaleCountDto) {
             this.createMemberDto = createMemberDto;
             this.createWhaleCountDto = createWhaleCountDto;
+        }
+    }
+
+    @Data
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    static class CreateResultHistory {
+
+        private LocalDateTime resultTestTime;
+        private CreateWhaleCountDto whaleCountDto;
+
+        public CreateResultHistory(Result result) {
+            this.resultTestTime = result.getTestTime();
+            this.whaleCountDto = new CreateWhaleCountDto(result.getWhaleCount());
         }
     }
 

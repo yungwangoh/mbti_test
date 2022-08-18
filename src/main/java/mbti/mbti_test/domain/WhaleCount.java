@@ -40,8 +40,4 @@ public class WhaleCount {
     public void setSharePoint(double share) {
         this.share = share;
     }
-    public void whaleCountValueV2(WhaleCount whaleCount) {
-
-        
-    }
 }
