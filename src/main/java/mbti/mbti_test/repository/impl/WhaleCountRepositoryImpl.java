@@ -77,7 +77,7 @@ public class WhaleCountRepositoryImpl implements WhaleCountRepository {
                 new WhaleCount("남방참고래", 0),
                 new WhaleCount("귀신고래", 0),
                 new WhaleCount("항유고래", 0),
-                new WhaleCount("낫골고래", 0),
+                new WhaleCount("낫돌고래", 0),
                 new WhaleCount("혹등고래", 0)
         );
 
