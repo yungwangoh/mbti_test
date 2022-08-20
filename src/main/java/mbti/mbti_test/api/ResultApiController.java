@@ -1,22 +1,27 @@
 package mbti.mbti_test.api;
 
 import lombok.*;
+import mbti.mbti_test.config.security.user.CustomUserDetailService;
+import mbti.mbti_test.config.security.user.MemberLoginRepository;
 import mbti.mbti_test.dto.CreateMemberDto;
 import mbti.mbti_test.dto.CreateResultDto;
 import mbti.mbti_test.dto.CreateWhaleCountDto;
 import mbti.mbti_test.domain.Member;
 import mbti.mbti_test.domain.Result;
 import mbti.mbti_test.domain.WhaleCount;
+import mbti.mbti_test.dto.UserLoginDto;
 import mbti.mbti_test.service.MemberService;
 import mbti.mbti_test.service.ResultService;
 import mbti.mbti_test.service.WhaleCountService;
 import mbti.mbti_test.service.impl.WhaleAlgorithm;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.*;
 
@@ -25,8 +30,12 @@ import static java.util.stream.Collectors.*;
 public class ResultApiController {
 
     private final MemberService memberService;
+
+    private final MemberLoginRepository memberLoginRepository;
     private final ResultService resultService;
     private final WhaleCountService whaleCountService;
+
+    private final CustomUserDetailService findByAccount;
     private final WhaleAlgorithm whaleAlgorithm;
 
 
@@ -79,84 +88,69 @@ public class ResultApiController {
 
     // 0818 리팩토링
     @PostMapping("/api/history/result")
-    public List<CreateResultHistory> userResultHistory(@RequestBody @Valid CreateMemberDto createMemberDto) {
+    public List<CreateResultHistory> userResultHistory(@RequestBody @Valid CreateHistoryAccount createHistoryAccount) {
 
         List<Result> resultListHistory = new ArrayList<>();
-        List<Result> memberResultService = resultService.findMemberResultService(createMemberDto.getId());
 
-        memberResultService.forEach(result -> {
-            resultListHistory.add(result);
-        });
+        UserDetails userDetails = findByAccount.loadUserByUsername(createHistoryAccount.getAccount());
 
-        List<CreateResultHistory> resultHistories = resultListHistory.stream()
-                .map(result -> new CreateResultHistory(result))
-                .collect(toList());
+        if(userDetails.getUsername().equals(createHistoryAccount.getAccount())) { // History 조회는 회원만 가능하다.
+            Optional<Member> account = memberLoginRepository.findByAccount(createHistoryAccount.Account);
+            List<Result> memberResultService = resultService.findMemberResultService(account.get().getId());
 
-        return resultHistories;
-    }
+            memberResultService.forEach(result -> {
+                resultListHistory.add(result);
+            });
 
-    //0814 Hayoon
-    //결과 히스토리 조회V2
-    @PostMapping("/api/history/v2/result/{memberId}")
-    public List<CreateWhaleCountDto> userResultHistoryV2(@PathVariable("memberId") Long memberId, @RequestBody @Valid CreateMemberDto createMemberDto) {
+            List<CreateResultHistory> resultHistories = resultListHistory.stream()
+                    .map(result -> new CreateResultHistory(result))
+                    .collect(toList());
 
-        List<WhaleCount> whaleCounts = new ArrayList<>();
-        List<Result> memberResultService = resultService.findMemberResultService(memberId);
-
-        memberResultService.forEach(result -> {
-            whaleCounts.add(result.getWhaleCount());
-        });
-
-        List<CreateWhaleCountDto> whaleCountDtos = whaleCounts.stream()
-                .map(whaleCount -> new CreateWhaleCountDto(whaleCount))
-                .collect(toList());
-
-        return whaleCountDtos;
+            return resultHistories;
+        } else throw new IllegalAccessError("비회원은 접근이 불가능합니다."); // 비회원 Error..
     }
 
     @PostMapping("/api/create/result")
     public CreateResultResponse saveResultV2(@RequestBody @Valid CreateResultSave createResultSave) {
-        Member findMember = memberService.findOne(createResultSave.createMemberDto.getId());
-        WhaleCount whaleNameMbti = whaleCountService.findWhaleNameMbti(createResultSave.createWhaleCountDto.getWhaleName());
-        Result result = Result.createResult(findMember, whaleNameMbti);
-        whaleAlgorithm.AllSharePoints(whaleCountService.findAll());
 
-        Long crateResultId = resultService.ResultJoin(result);
+        UserDetails userDetails = findByAccount.loadUserByUsername(createResultSave.getAccount());
+        Long crateResultId = 0L;
+
+        if(userDetails.getUsername().equals(createResultSave.getAccount())) { // 회원일 경우
+            Optional<Member> account = memberLoginRepository.findByAccount(createResultSave.Account);
+            WhaleCount whaleNameMbti = whaleCountService.findWhaleNameMbti(createResultSave.createWhaleCountDto.getWhaleName());
+            Result result = Result.createResult(account.get(), whaleNameMbti);
+            whaleAlgorithm.AllSharePoints(whaleCountService.findAll());
+
+            crateResultId = resultService.ResultJoin(result);
+        }else { // 비회원일 경우
+            WhaleCount whaleNameMbti = whaleCountService.findWhaleNameMbti(createResultSave.createWhaleCountDto.getWhaleName());
+            whaleNameMbti.whaleCountValue();
+            whaleAlgorithm.AllSharePoints(whaleCountService.findAll());
+        }
 
         return new CreateResultResponse(crateResultId);
     }
 
-    //0814 Hayoon
-    // saveResultV3 메서드 작성(@PathVariable 사용)
-    @PostMapping("/api/create/v3/result/{memberId}")
-    public CreateResultResponse saveResultV3(@PathVariable("memberId") Long memberId, @RequestBody @Valid CreateResultSaveV2 createResultSaveV2) {
-        Member findMember = memberService.findOne(memberId);
-        WhaleCount whaleNameMbti = whaleCountService.findWhaleNameMbti(createResultSaveV2.createWhaleCountDto.getWhaleName());
-        Result result = Result.createResult(findMember, whaleNameMbti);
-        Long createResultId = resultService.ResultJoin(result);
-
-        //whaleAlgorithm.AllSharePoints(whaleAlgorithm.getWhaleCounts());
-        return new CreateResultResponse(createResultId);
-    }
-
     @Data
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    static class CreateResultSaveV2 {
-        private CreateWhaleCountDto createWhaleCountDto;
+    static class CreateHistoryAccount {
+        private String Account;
 
-        public CreateResultSaveV2(CreateWhaleCountDto createWhaleCountDto) {
-            this.createWhaleCountDto = createWhaleCountDto;
+        public CreateHistoryAccount(UserLoginDto userLoginDto) {
+            Account = userLoginDto.getAccount();
         }
     }
 
     @Data
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     static class CreateResultSave {
-        private CreateMemberDto createMemberDto;
+
+        private String Account;
         private CreateWhaleCountDto createWhaleCountDto;
 
-        public CreateResultSave(CreateMemberDto createMemberDto, CreateWhaleCountDto createWhaleCountDto) {
-            this.createMemberDto = createMemberDto;
+        public CreateResultSave(UserLoginDto userLoginDto, CreateWhaleCountDto createWhaleCountDto) {
+            this.Account = userLoginDto.getAccount();
             this.createWhaleCountDto = createWhaleCountDto;
         }
     }

@@ -1,5 +1,6 @@
 package mbti.mbti_test.service.impl;
 
+import mbti.mbti_test.api.WhaleCountApiController;
 import mbti.mbti_test.dto.CreateWhaleCountDto;
 import mbti.mbti_test.domain.MbtiList;
 import mbti.mbti_test.domain.WhaleCount;
@@ -23,6 +24,9 @@ class WhaleCountServiceImplTest {
 
     @Autowired
     WhaleCountRepository whaleCountRepository;
+
+    @Autowired
+    WhaleCountApiController whaleCountApiController;
 
     @Autowired
     EntityManager em;
@@ -60,7 +64,7 @@ class WhaleCountServiceImplTest {
 
     @Test
     public void 고래궁합() {
-        WhaleCount 일각고래 = whaleCountRepository.findWhaleName("상괭이");
+        WhaleCount 일각고래 = whaleCountRepository.findWhaleName("고양이고래");
         CreateWhaleCountDto createWhaleCountDto = new CreateWhaleCountDto(일각고래);
 
         List<WhaleCount> whaleCounts = whaleCountService.whaleCompatibility(createWhaleCountDto);
@@ -68,5 +72,11 @@ class WhaleCountServiceImplTest {
         whaleCounts.forEach(e -> {
             System.out.println("e.getName() = " + e.getName());
         });
+    }
+
+    @Test
+    public void 고래찾기() {
+        WhaleCount 고양이고래 = whaleCountRepository.findWhaleName("병코돌고래");
+        System.out.println("고양이고래 = " + 고양이고래.getName());
     }
 }
