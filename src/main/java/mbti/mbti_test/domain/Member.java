@@ -55,6 +55,7 @@ public class Member implements UserDetails {
     private MemberStatus memberStatus; // 유저와 비유저 [USER, NONUSER]
 
     @OneToMany(mappedBy = "member")
+    @Builder.Default
     private List<Result> results = new ArrayList<>();
 
     //0806 Hayoon

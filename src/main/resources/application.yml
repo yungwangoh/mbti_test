@@ -5,7 +5,7 @@ spring:
     #password:
     #driver-class-name: org.h2.Driver
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/mbti?serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:mariadb://43.200.94.144:3306/mbti?serverTimezone=UTC&characterEncoding=UTF-8
     username: admin
     password: Abcd123!
     hikari:

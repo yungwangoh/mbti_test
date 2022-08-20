@@ -98,7 +98,7 @@ public class ResultApiController {
     //0814 Hayoon
     //결과 히스토리 조회V2
     @PostMapping("/api/history/v2/result/{memberId}")
-    public List<CreateWhaleCountDto> userResultHistoryV2(@PathVariable("memberId") Long memberId, @RequestBody @Valid CreateMemberDto createMemberDto) {
+    public List<CreateWhaleCountDto> userResultHistoryV2(@PathVariable("memberId") Long memberId) {
 
         List<WhaleCount> whaleCounts = new ArrayList<>();
         List<Result> memberResultService = resultService.findMemberResultService(memberId);

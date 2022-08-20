@@ -97,6 +97,24 @@ public class MemberApiController {
         return jwtTokenProvider.createToken(member.getUsername(), member.getRoles());
     }
 
+    // 로그인
+    //0820 Hayoon
+    //https://jwt.io/ 에서 Encoder -> Decoder(Payload) 확인가능.
+    //Bearer Token 생성
+    @PostMapping("/api/v4/login")
+    public ResponseEntity<TokenResponse> loginV4(@RequestBody @Valid UserLoginDto userDto) {
+        System.out.println(userDto.getAccount() + " " + userDto.getPassword());
+        Member member = memberLoginRepository.findByAccount(userDto.getAccount())
+                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 ACCOUNT 입니다."));
+        if (!passwordEncoder.matches(userDto.getPassword(), member.getPassword())) {
+            throw new IllegalArgumentException("잘못된 비밀번호입니다.");
+        }
+
+        log.info("\n로그인 성공!");
+        String token = jwtTokenProvider.createToken(member.getUsername(), member.getRoles());
+        return ResponseEntity.ok().body(new TokenResponse(token, "bearer", member.getAccount()));
+    }
+
     // 회원정보 수정
     //0813 Hayoon
     @PutMapping("/api/v2/members/{id}")
@@ -154,6 +172,20 @@ public class MemberApiController {
             this.account = account;
             this.pwd = pwd;
             this.updateDateTime = updateDateTime;
+        }
+    }
+
+    @Data
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    static class TokenResponse {
+        private String accessToken;
+        private String tokenType;
+        private String account;
+
+        public TokenResponse(String accessToken, String tokenType, String account) {
+            this.accessToken = accessToken;
+            this.tokenType = tokenType;
+            this.account = account;
         }
     }
 }
