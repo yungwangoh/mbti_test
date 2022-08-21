@@ -103,9 +103,8 @@ public class MemberApiController {
         }
 
         log.info("\n로그인 성공!");
-        String token = jwtTokenProvider.createToken(member.getUsername(), member.getRoles());
+        String token = jwtTokenProvider.createToken(byAccount.get().getUsername(), byAccount.get().getRoles());
         log.info("\n토큰 복호화->Account" + jwtTokenProvider.getMemberPk(token));
-        return token;
         return jwtTokenProvider.createToken(userDetails.getUsername(), byAccount.get().getRoles());
     }
 
