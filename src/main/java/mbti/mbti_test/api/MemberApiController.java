@@ -2,6 +2,7 @@ package mbti.mbti_test.api;
 
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import mbti.mbti_test.config.security.user.CustomUserDetailService;
 import mbti.mbti_test.dto.CreateMemberDto;
 import mbti.mbti_test.dto.UpdateMemberDto;
 import mbti.mbti_test.service.impl.MemberServiceImpl;
@@ -9,6 +10,7 @@ import mbti.mbti_test.dto.UserLoginDto;
 import mbti.mbti_test.exception.MemberAlreadyExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import mbti.mbti_test.config.security.JwtTokenProvider;
 import mbti.mbti_test.config.security.user.MemberLoginRepository;
@@ -33,6 +35,8 @@ public class MemberApiController {
     private final PasswordEncoder passwordEncoder;
     private final MemberLoginRepository memberLoginRepository;
     @Autowired private final MemberServiceImpl memberServiceImpl;
+
+    private final CustomUserDetailService customUserDetailService;
 
     @GetMapping("/api/v2/members")
     public List<CreateMemberDto> memberV2() {
@@ -87,14 +91,14 @@ public class MemberApiController {
     @PostMapping("/api/v3/login")
     public String login(@RequestBody @Valid UserLoginDto userDto) {
         System.out.println(userDto.getAccount() + " " + userDto.getPassword());
-        Member member = memberLoginRepository.findByAccount(userDto.getAccount())
-                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 ACCOUNT 입니다."));
-        if (!passwordEncoder.matches(userDto.getPassword(), member.getPassword())) {
+        Optional<Member> byAccount = memberLoginRepository.findByAccount(userDto.getAccount());
+        UserDetails userDetails = customUserDetailService.loadUserByUsername(byAccount.get().getAccount());
+        if (!passwordEncoder.matches(userDto.getPassword(), userDetails.getPassword())) {
             throw new IllegalArgumentException("잘못된 비밀번호입니다.");
         }
 
         log.info("\n로그인 성공!");
-        return jwtTokenProvider.createToken(member.getUsername(), member.getRoles());
+        return jwtTokenProvider.createToken(userDetails.getUsername(), byAccount.get().getRoles());
     }
 
     // 회원정보 수정

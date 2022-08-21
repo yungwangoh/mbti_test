@@ -59,7 +59,7 @@ public class WebSecurityConfig {
         return http.build();
     }
 
-    @Bean //0818 cors 해결
+    @Bean //0818 spring security cors 해결
     public CorsConfigurationSource configurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
 

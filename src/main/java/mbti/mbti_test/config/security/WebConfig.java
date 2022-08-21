@@ -6,7 +6,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @EnableWebSecurity
-@Configuration
+@Configuration // spring mvc cors
 public class WebConfig implements WebMvcConfigurer {
 
     @Override

@@ -34,7 +34,9 @@ public class ResultRepositoryImpl implements ResultRepository {
 
     @Override
     public List<Result> findMemberResult(Long memberId) { // 페이징 처리? -> 최적화...
-        return em.createQuery("select r from Result r where r.member.id = :memberId", Result.class)
+        return em.createQuery("select r from Result r " +
+                        " join fetch r.whaleCount" +
+                        " join fetch r.member m where m.id = :memberId", Result.class)
                 .setFirstResult(0)
                 .setMaxResults(10)
                 .setParameter("memberId", memberId)
@@ -44,50 +46,8 @@ public class ResultRepositoryImpl implements ResultRepository {
     @Override
     public List<Result> findWithMemberWhaleRepo() { // fetch join 최적화 메서드
         return em.createQuery("select r from Result r" +
-                " join fetch r.member m" +
-                " join fetch r.whaleCount w", Result.class)
+                " join fetch r.member" +
+                " join fetch r.whaleCount", Result.class)
                 .getResultList();
     }
-
-    @Override
-    public List<Result> findAllByWhale(ResultSearch resultSearch) {
-        //language = JPAQL
-        String jpql = "select r From Result r join r.mbtiList m";
-        boolean isFirstCondition = true;
-
-        //결과 고래 종류별 검색
-        if (resultSearch.getMbtiList() != null) {
-            if (isFirstCondition) {
-                jpql += "where";
-                isFirstCondition = false;
-            } else {
-                jpql += "and";
-            }
-            jpql += "r.type =: type";
-        }
-        /**
-         * (현재 미구현 파트)
-         //회원 이름별 검색
-         if (StringUtils.hasText(resultSearch.getMemberName())) {
-         if (isFirstCondition) {
-         jpql += "where";
-         isFirstCondition = false;
-         } else {
-         jpql += "and";
-         }
-         jpql += "w.type like =: type";
-         }**/
-
-        TypedQuery<Result> query = em.createQuery(jpql, Result.class)
-                .setMaxResults(10);
-        if (resultSearch.getMbtiList() != null) {
-            query = query.setParameter("type", resultSearch.getMbtiList().whaleNameMethod());
-        }
-        /**
-         if (StringUtils.hasText(resultSearch.getMemberName())) {
-         query = query.setParameter("name", resultSearch.getMemberName());
-         }**/
-        return query.getResultList();
-    }
-
 }

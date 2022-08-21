@@ -3,6 +3,7 @@ package mbti.mbti_test.api;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import mbti.mbti_test.config.security.user.MemberAdapter;
 import mbti.mbti_test.dto.CreateMemberDto;
 import mbti.mbti_test.dto.CreateWhaleCountDto;
 import mbti.mbti_test.domain.Address;
@@ -42,7 +43,6 @@ class ResultApiControllerTest {
         WhaleCount whaleCount = whaleCountService.findWhaleNameMbti("범고래");
 
         CreateWhaleCountDto createWhaleCountDto = new CreateWhaleCountDto(whaleCount);
-
 
         ObjectMapper mapper = new ObjectMapper();
 

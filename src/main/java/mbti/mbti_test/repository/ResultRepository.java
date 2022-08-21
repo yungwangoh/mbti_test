@@ -13,7 +13,7 @@ public interface ResultRepository {
 
     List<Result> findMemberResult(Long memberId);
 
-    List<Result> findAllByWhale(ResultSearch resultSearch);
+    //List<Result> findAllByWhale(ResultSearch resultSearch);
 
     List<Result> findWithMemberWhaleRepo(); // fetch join 최적화 메서드
 }

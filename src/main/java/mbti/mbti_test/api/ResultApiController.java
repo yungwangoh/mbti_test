@@ -1,19 +1,20 @@
 package mbti.mbti_test.api;
 
 import lombok.*;
+import mbti.mbti_test.config.security.JwtTokenProvider;
 import mbti.mbti_test.config.security.user.CustomUserDetailService;
+import mbti.mbti_test.config.security.user.MemberAdapter;
 import mbti.mbti_test.config.security.user.MemberLoginRepository;
-import mbti.mbti_test.dto.CreateMemberDto;
 import mbti.mbti_test.dto.CreateResultDto;
 import mbti.mbti_test.dto.CreateWhaleCountDto;
 import mbti.mbti_test.domain.Member;
 import mbti.mbti_test.domain.Result;
 import mbti.mbti_test.domain.WhaleCount;
-import mbti.mbti_test.dto.UserLoginDto;
 import mbti.mbti_test.service.MemberService;
 import mbti.mbti_test.service.ResultService;
 import mbti.mbti_test.service.WhaleCountService;
 import mbti.mbti_test.service.impl.WhaleAlgorithm;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +39,7 @@ public class ResultApiController {
     private final CustomUserDetailService findByAccount;
     private final WhaleAlgorithm whaleAlgorithm;
 
+    private final JwtTokenProvider jwtTokenProvider;
 
     @GetMapping("/api/v2/result")
     public List<CreateResultDto> resultV2() {
@@ -88,14 +90,14 @@ public class ResultApiController {
 
     // 0818 리팩토링
     @PostMapping("/api/history/result")
-    public List<CreateResultHistory> userResultHistory(@RequestBody @Valid CreateHistoryAccount createHistoryAccount) {
+    public List<CreateResultHistory> userResultHistory(@RequestHeader("X-AUTH-TOKEN") String token) {
 
         List<Result> resultListHistory = new ArrayList<>();
+        String memberPk = jwtTokenProvider.getMemberPk(token);
+        Optional<Member> account = memberLoginRepository.findByAccount(memberPk);
 
-        UserDetails userDetails = findByAccount.loadUserByUsername(createHistoryAccount.getAccount());
+        if(!account.isEmpty()) { // History 조회는 회원만 가능하다.
 
-        if(userDetails.getUsername().equals(createHistoryAccount.getAccount())) { // History 조회는 회원만 가능하다.
-            Optional<Member> account = memberLoginRepository.findByAccount(createHistoryAccount.Account);
             List<Result> memberResultService = resultService.findMemberResultService(account.get().getId());
 
             memberResultService.forEach(result -> {
@@ -111,20 +113,19 @@ public class ResultApiController {
     }
 
     @PostMapping("/api/create/result")
-    public CreateResultResponse saveResultV2(@RequestBody @Valid CreateResultSave createResultSave) {
-
-        UserDetails userDetails = findByAccount.loadUserByUsername(createResultSave.getAccount());
+    public CreateResultResponse saveResultV2(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody @Valid CreateWhaleCountDto createWhaleCountDto) {
+        String memberPk = jwtTokenProvider.getMemberPk(token);
+        Optional<Member> account = memberLoginRepository.findByAccount(memberPk);
         Long crateResultId = 0L;
 
-        if(userDetails.getUsername().equals(createResultSave.getAccount())) { // 회원일 경우
-            Optional<Member> account = memberLoginRepository.findByAccount(createResultSave.Account);
-            WhaleCount whaleNameMbti = whaleCountService.findWhaleNameMbti(createResultSave.createWhaleCountDto.getWhaleName());
+        if(!account.isEmpty()) { // 회원일 경우
+            WhaleCount whaleNameMbti = whaleCountService.findWhaleNameMbti(createWhaleCountDto.getWhaleName());
             Result result = Result.createResult(account.get(), whaleNameMbti);
             whaleAlgorithm.AllSharePoints(whaleCountService.findAll());
 
             crateResultId = resultService.ResultJoin(result);
         }else { // 비회원일 경우
-            WhaleCount whaleNameMbti = whaleCountService.findWhaleNameMbti(createResultSave.createWhaleCountDto.getWhaleName());
+            WhaleCount whaleNameMbti = whaleCountService.findWhaleNameMbti(createWhaleCountDto.getWhaleName());
             whaleNameMbti.whaleCountValue();
             whaleAlgorithm.AllSharePoints(whaleCountService.findAll());
         }
@@ -132,27 +133,12 @@ public class ResultApiController {
         return new CreateResultResponse(crateResultId);
     }
 
-    @Data
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    static class CreateHistoryAccount {
-        private String Account;
+    @PostMapping("/test")
+    public String test(@RequestHeader("X-AUTH-TOKEN") String token) {
 
-        public CreateHistoryAccount(UserLoginDto userLoginDto) {
-            Account = userLoginDto.getAccount();
-        }
-    }
-
-    @Data
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    static class CreateResultSave {
-
-        private String Account;
-        private CreateWhaleCountDto createWhaleCountDto;
-
-        public CreateResultSave(UserLoginDto userLoginDto, CreateWhaleCountDto createWhaleCountDto) {
-            this.Account = userLoginDto.getAccount();
-            this.createWhaleCountDto = createWhaleCountDto;
-        }
+        String memberPk = jwtTokenProvider.getMemberPk(token);
+        Optional<Member> byAccount = memberLoginRepository.findByAccount(memberPk);
+        return byAccount.get().getAccount();
     }
 
     @Data
