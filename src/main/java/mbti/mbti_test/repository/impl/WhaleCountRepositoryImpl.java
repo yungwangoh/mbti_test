@@ -45,7 +45,6 @@ public class WhaleCountRepositoryImpl implements WhaleCountRepository {
         return em.createQuery("select w from WhaleCount w where w.name = :name", WhaleCount.class)
                 .setParameter("name", name)
                 .getSingleResult();
-
     }
 
     @Override
@@ -76,7 +75,7 @@ public class WhaleCountRepositoryImpl implements WhaleCountRepository {
                 new WhaleCount("범고래", 0),
                 new WhaleCount("남방참고래", 0),
                 new WhaleCount("귀신고래", 0),
-                new WhaleCount("항유고래", 0),
+                new WhaleCount("향유고래", 0),
                 new WhaleCount("낫돌고래", 0),
                 new WhaleCount("혹등고래", 0)
         );
