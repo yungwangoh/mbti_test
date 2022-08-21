@@ -144,6 +144,7 @@ public class MemberApiController {
         log.info("로그아웃 유저 아이디: '{}'", memberAdapter.getUsername());
         return new ResponseEntity<>(new DefaultResponseDto( 200,"로그아웃 되었습니다."), HttpStatus.OK);
     }
+
     // 회원정보 수정
     //0813 Hayoon
     @PutMapping("/api/v2/members")
