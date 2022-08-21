@@ -1,14 +1,23 @@
 package mbti.mbti_test.api;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import mbti.mbti_test.config.security.user.CustomUserDetailService;
+import mbti.mbti_test.config.security.user.MemberAdapter;
 import mbti.mbti_test.dto.CreateMemberDto;
+import mbti.mbti_test.dto.TokenDto;
 import mbti.mbti_test.dto.UpdateMemberDto;
 import mbti.mbti_test.service.impl.MemberServiceImpl;
 import mbti.mbti_test.dto.UserLoginDto;
 import mbti.mbti_test.exception.MemberAlreadyExistException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +28,7 @@ import mbti.mbti_test.domain.Member;
 import mbti.mbti_test.service.MemberService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -34,9 +44,9 @@ public class MemberApiController {
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final MemberLoginRepository memberLoginRepository;
-    @Autowired private final MemberServiceImpl memberServiceImpl;
-
+    private final MemberServiceImpl memberServiceImpl;
     private final CustomUserDetailService customUserDetailService;
+    private final StringRedisTemplate redisTemplate;
 
     @GetMapping("/api/v2/members")
     public List<CreateMemberDto> memberV2() {
@@ -102,6 +112,10 @@ public class MemberApiController {
             log.info("\n로그인 성공!");
             return jwtTokenProvider.createToken(userDetails.getUsername(), byAccount.get().getRoles());
         } else throw new IllegalStateException("계정이 없습니다.");
+        log.info("\n로그인 성공!");
+        String token = jwtTokenProvider.createToken(byAccount.get().getUsername(), byAccount.get().getRoles());
+        log.info("\n토큰 복호화->Account" + jwtTokenProvider.getMemberPk(token));
+        return jwtTokenProvider.createToken(userDetails.getUsername(), byAccount.get().getRoles());
     }
 
     // 로그인
@@ -122,17 +136,44 @@ public class MemberApiController {
         return ResponseEntity.ok().body(new TokenResponse(token, "bearer", member.getAccount()));
     }
 
+    // 로그아웃
+    //0821 Hayoon
+    @ApiOperation(value ="logout")
+    @ApiResponses({@ApiResponse(code = 204, message = "success")})
+    @GetMapping("/api/v4/logout")
+    public ResponseEntity<?> logout(@RequestHeader("X-AUTH-TOKEN") String jwt) {
+        //String token = jwtTokenProvider
+        ValueOperations<String, String> logoutValueOperations = redisTemplate.opsForValue();
+        logoutValueOperations.set(jwt, jwt);
+        MemberAdapter memberAdapter = (MemberAdapter) jwtTokenProvider.getAuthentication(jwt).getPrincipal();
+        log.info("로그아웃 유저 아이디: '{}'", memberAdapter.getUsername());
+        return new ResponseEntity<>(new DefaultResponseDto( 200,"로그아웃 되었습니다."), HttpStatus.OK);
+    }
+
     // 회원정보 수정
     //0813 Hayoon
-    @PutMapping("/api/v2/members/{id}")
-    public UpdateMemberResponse updateMemberV2(@PathVariable("id") Long id,
+    @PutMapping("/api/v2/members")
+    public UpdateMemberResponse updateMemberV2(@RequestHeader("X-AUTH-TOKEN") String token,
                                                @RequestBody @Valid UpdateMemberDto updateMemberDto) {
-        Member findMember = memberService.findOne(id);
+        String account = jwtTokenProvider.getMemberPk(token);
+        Optional<Member> findMember = memberLoginRepository.findByAccount(account);
         memberService.updateMember(findMember, updateMemberDto);
-        return new UpdateMemberResponse(findMember.getEmail(),
-                findMember.getAddress(), findMember.getAccount(), findMember.getPwd(),
-                findMember.getUpdateDateTime());
+
+        return new UpdateMemberResponse(findMember.get().getEmail(),
+                findMember.get().getAddress(), findMember.get().getAccount(), findMember.get().getPwd(),
+                findMember.get().getUpdateDateTime());
     }
+
+    /*
+     * AccessToken이 만료되었을 때 토큰(AccessToken , RefreshToken) 재발급해주는 메서드
+     */
+//    @PostMapping("/reissue")
+//    public ResponseEntity<TokenDto> reissue(
+//            @RequestBody @Valid TokenDto requestTokenDto) {
+//        TokenDto tokenDto = authService
+//                .reissue(requestTokenDto.getAccessToken(), requestTokenDto.getRefreshToken());
+//        return ResponseEntity.ok(new TokenDto());
+//    }
 
     //0810 Hayoon
     //User 외 접근 제한을 걸어둔 리소스에 요청을 보내 결과 Response 확인
@@ -195,5 +236,18 @@ public class MemberApiController {
             this.account = account;
         }
     }
+
+    @Data
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    static class DefaultResponseDto {
+        private int serverStatus;
+        private String msg;
+
+        public DefaultResponseDto(int serverStatus, String msg) {
+            this.serverStatus = serverStatus;
+            this.msg = msg;
+        }
+    }
+
 }
 

@@ -1,10 +1,13 @@
-package mbti.mbti_test.config.security;
+package mbti.mbti_test.config.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,7 +22,10 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Component
+@Slf4j
 public class JwtTokenProvider {
+
+    private final StringRedisTemplate redisTemplate;
 
     private String secretKey = "mbti";
 
@@ -65,6 +71,11 @@ public class JwtTokenProvider {
     public boolean validateToken(String jwtToken) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
+            ValueOperations<String, String> logoutValueOperations = redisTemplate.opsForValue();
+            if(logoutValueOperations.get(jwtToken) != null) {
+                log.info("로그아웃 된 토큰입니다.");
+                return false;
+            }
             return !claims.getBody().getExpiration().before(new Date());
         } catch (Exception e) {
             return false;

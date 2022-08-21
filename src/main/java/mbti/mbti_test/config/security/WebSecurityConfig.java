@@ -1,6 +1,8 @@
 package mbti.mbti_test.config.security;
 
 import lombok.RequiredArgsConstructor;
+import mbti.mbti_test.config.security.jwt.JwtAuthenticationFilter;
+import mbti.mbti_test.config.security.jwt.JwtTokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -43,7 +45,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors().configurationSource(consConfigurationSource()) //0820 추가
+                .cors().configurationSource(corsConfigurationSource()) //0820 추가
                 .and()//이 부분 추가
                     .httpBasic().disable() //Rest Api 고려하여 default setting 해제
                     .csrf().disable() //csrf 보안 토큰 disable처리.
@@ -54,7 +56,7 @@ public class WebSecurityConfig {
                     .antMatchers("/api/user/**").hasRole("USER")
                     .antMatchers("/api/v3/join").permitAll()
                     .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() //0820 추가
-                    .anyRequest().authenticated() // 그 외 나머지 요청은 누구나 접근 가능
+                    .anyRequest().permitAll() // 그 외 나머지 요청은 누구나 접근 가능
                 .and()
                     .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class);
