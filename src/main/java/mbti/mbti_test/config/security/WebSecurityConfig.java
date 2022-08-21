@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +18,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -37,13 +40,10 @@ public class WebSecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-
-    //0820 Hayoon
-    //Cors 관련 추가코드
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors().configurationSource(consConfigurationSource()) //0820 추가
+                .cors().configurationSource(corsConfigurationSource()) //0820 추가
                 .and()//이 부분 추가
                     .httpBasic().disable() //Rest Api 고려하여 default setting 해제
                     .csrf().disable() //csrf 보안 토큰 disable처리.
@@ -54,7 +54,7 @@ public class WebSecurityConfig {
                     .antMatchers("/api/user/**").hasRole("USER")
                     .antMatchers("/api/v3/join").permitAll()
                     .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() //0820 추가
-                    .anyRequest().permitAll() // 그 외 나머지 요청은 누구나 접근 가능
+                    .anyRequest().authenticated() // 그 외 나머지 요청은 누구나 접근 가능
                 .and()
                     .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class);
@@ -64,7 +64,7 @@ public class WebSecurityConfig {
     }
 
     @Bean //0818 cors 해결
-    public CorsConfigurationSource consConfigurationSource() {
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
 
         corsConfiguration.addAllowedOrigin("http://localhost:3000");
