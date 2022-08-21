@@ -3,7 +3,6 @@ package mbti.mbti_test.api;
 import lombok.*;
 import mbti.mbti_test.config.security.JwtTokenProvider;
 import mbti.mbti_test.config.security.user.CustomUserDetailService;
-import mbti.mbti_test.config.security.user.MemberAdapter;
 import mbti.mbti_test.config.security.user.MemberLoginRepository;
 import mbti.mbti_test.dto.CreateResultDto;
 import mbti.mbti_test.dto.CreateWhaleCountDto;
@@ -14,8 +13,6 @@ import mbti.mbti_test.service.MemberService;
 import mbti.mbti_test.service.ResultService;
 import mbti.mbti_test.service.WhaleCountService;
 import mbti.mbti_test.service.impl.WhaleAlgorithm;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -31,14 +28,12 @@ import static java.util.stream.Collectors.*;
 public class ResultApiController {
 
     private final MemberService memberService;
-
     private final MemberLoginRepository memberLoginRepository;
     private final ResultService resultService;
     private final WhaleCountService whaleCountService;
 
     private final CustomUserDetailService findByAccount;
     private final WhaleAlgorithm whaleAlgorithm;
-
     private final JwtTokenProvider jwtTokenProvider;
 
     @GetMapping("/api/v2/result")
@@ -112,33 +107,26 @@ public class ResultApiController {
         } else throw new IllegalAccessError("비회원은 접근이 불가능합니다."); // 비회원 Error..
     }
 
-    @PostMapping("/api/create/result")
-    public CreateResultResponse saveResultV2(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody @Valid CreateWhaleCountDto createWhaleCountDto) {
+    @PostMapping("/api/create/user/result") // 회원 결과 저장
+    public CreateResultResponse saveResultV2User(@RequestHeader("X-AUTH-TOKEN") String token, @RequestBody @Valid CreateWhaleCountDto createWhaleCountDto) {
         String memberPk = jwtTokenProvider.getMemberPk(token);
         Optional<Member> account = memberLoginRepository.findByAccount(memberPk);
-        Long crateResultId = 0L;
 
         if(!account.isEmpty()) { // 회원일 경우
             WhaleCount whaleNameMbti = whaleCountService.findWhaleNameMbti(createWhaleCountDto.getWhaleName());
             Result result = Result.createResult(account.get(), whaleNameMbti);
             whaleAlgorithm.AllSharePoints(whaleCountService.findAll());
 
-            crateResultId = resultService.ResultJoin(result);
-        }else { // 비회원일 경우
-            WhaleCount whaleNameMbti = whaleCountService.findWhaleNameMbti(createWhaleCountDto.getWhaleName());
-            whaleNameMbti.whaleCountValue();
-            whaleAlgorithm.AllSharePoints(whaleCountService.findAll());
-        }
+            Long crateResultId = resultService.ResultJoin(result);
 
-        return new CreateResultResponse(crateResultId);
+            return new CreateResultResponse(crateResultId);
+        }else throw new IllegalAccessError("비회원은 접근이 불가합니다.");
     }
 
-    @PostMapping("/test")
-    public String test(@RequestHeader("X-AUTH-TOKEN") String token) {
-
-        String memberPk = jwtTokenProvider.getMemberPk(token);
-        Optional<Member> byAccount = memberLoginRepository.findByAccount(memberPk);
-        return byAccount.get().getAccount();
+    @PostMapping("/api/create/non-user/result") // 비회원 결과 저장
+    public void saveResultV2NonUser(@RequestBody @Valid CreateWhaleCountDto createWhaleCountDto) {
+        WhaleCount whaleNameMbti = whaleCountService.findWhaleNameMbti(createWhaleCountDto.getWhaleName());
+        whaleNameMbti.whaleCountValue();
     }
 
     @Data
