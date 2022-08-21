@@ -1,4 +1,4 @@
-package mbti.mbti_test.config.security;
+package mbti.mbti_test.config.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;

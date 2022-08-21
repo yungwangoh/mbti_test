@@ -1,6 +1,8 @@
 package mbti.mbti_test.config.security;
 
 import lombok.RequiredArgsConstructor;
+import mbti.mbti_test.config.security.jwt.JwtAuthenticationFilter;
+import mbti.mbti_test.config.security.jwt.JwtTokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -15,8 +17,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -54,7 +54,7 @@ public class WebSecurityConfig {
                     .antMatchers("/api/user/**").hasRole("USER")
                     .antMatchers("/api/v3/join").permitAll()
                     .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() //0820 추가
-                    .anyRequest().authenticated() // 그 외 나머지 요청은 누구나 접근 가능
+                    .anyRequest().permitAll() // 그 외 나머지 요청은 누구나 접근 가능
                 .and()
                     .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class);

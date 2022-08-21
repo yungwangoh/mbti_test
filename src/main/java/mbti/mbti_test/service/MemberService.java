@@ -15,6 +15,6 @@ public interface MemberService {
     //Long join(Member member) throws MemberAlreadyExistException;
     Member findOne(Long memberId);
     List<Member> findMembers();
-    void updateMember(Member findMember, UpdateMemberDto updateMemberDto);
+    void updateMember(Optional<Member> findMember, UpdateMemberDto updateMemberDto);
     void userValidation(CreateMemberDto createMemberDto) throws MemberAlreadyExistException;
 }

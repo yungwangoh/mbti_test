@@ -1,4 +1,4 @@
-package mbti.mbti_test.config.security;
+package mbti.mbti_test.config.security.jwt;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;

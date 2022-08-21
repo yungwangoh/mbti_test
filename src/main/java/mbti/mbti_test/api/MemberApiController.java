@@ -1,8 +1,12 @@
 package mbti.mbti_test.api;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import mbti.mbti_test.dto.CreateMemberDto;
+import mbti.mbti_test.dto.TokenDto;
 import mbti.mbti_test.dto.UpdateMemberDto;
 import mbti.mbti_test.service.impl.MemberServiceImpl;
 import mbti.mbti_test.dto.UserLoginDto;
@@ -10,13 +14,14 @@ import mbti.mbti_test.exception.MemberAlreadyExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import mbti.mbti_test.config.security.JwtTokenProvider;
+import mbti.mbti_test.config.security.jwt.JwtTokenProvider;
 import mbti.mbti_test.config.security.user.MemberLoginRepository;
 import mbti.mbti_test.domain.Address;
 import mbti.mbti_test.domain.Member;
 import mbti.mbti_test.service.MemberService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -94,7 +99,9 @@ public class MemberApiController {
         }
 
         log.info("\n로그인 성공!");
-        return jwtTokenProvider.createToken(member.getUsername(), member.getRoles());
+        String token = jwtTokenProvider.createToken(member.getUsername(), member.getRoles());
+        log.info("\n토큰 복호화->Account" + jwtTokenProvider.getMemberPk(token));
+        return token;
     }
 
     // 로그인
@@ -115,17 +122,38 @@ public class MemberApiController {
         return ResponseEntity.ok().body(new TokenResponse(token, "bearer", member.getAccount()));
     }
 
+    // 로그아웃
+    //0821 Hayoon
+//    @ApiOperation(value ="logout")
+//    @ApiResponses({@ApiResponse(code = 204, message = "success")})
+//    @GetMapping("/api/v4/logout")
+//    public ResponseEntity<String> logout(HttpServletRequest httpServletRequest) {
+//        String token = jwtTokenProvider
+//    }
     // 회원정보 수정
     //0813 Hayoon
-    @PutMapping("/api/v2/members/{id}")
-    public UpdateMemberResponse updateMemberV2(@PathVariable("id") Long id,
+    @PutMapping("/api/v2/members")
+    public UpdateMemberResponse updateMemberV2(@RequestHeader(value = "token") String token,
                                                @RequestBody @Valid UpdateMemberDto updateMemberDto) {
-        Member findMember = memberService.findOne(id);
+        String account = jwtTokenProvider.getMemberPk(token);
+        Optional<Member> findMember = memberLoginRepository.findByAccount(account);
         memberService.updateMember(findMember, updateMemberDto);
-        return new UpdateMemberResponse(findMember.getEmail(),
-                findMember.getAddress(), findMember.getAccount(), findMember.getPwd(),
-                findMember.getUpdateDateTime());
+
+        return new UpdateMemberResponse(findMember.get().getEmail(),
+                findMember.get().getAddress(), findMember.get().getAccount(), findMember.get().getPwd(),
+                findMember.get().getUpdateDateTime());
     }
+
+    /*
+     * AccessToken이 만료되었을 때 토큰(AccessToken , RefreshToken) 재발급해주는 메서드
+     */
+//    @PostMapping("/reissue")
+//    public ResponseEntity<TokenDto> reissue(
+//            @RequestBody @Valid TokenDto requestTokenDto) {
+//        TokenDto tokenDto = authService
+//                .reissue(requestTokenDto.getAccessToken(), requestTokenDto.getRefreshToken());
+//        return ResponseEntity.ok(new TokenDto());
+//    }
 
     //0810 Hayoon
     //User 외 접근 제한을 걸어둔 리소스에 요청을 보내 결과 Response 확인
