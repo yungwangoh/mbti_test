@@ -1,7 +1,7 @@
 package mbti.mbti_test.api;
 
 import lombok.*;
-import mbti.mbti_test.config.security.JwtTokenProvider;
+import mbti.mbti_test.config.security.jwt.JwtTokenProvider;
 import mbti.mbti_test.config.security.user.CustomUserDetailService;
 import mbti.mbti_test.config.security.user.MemberLoginRepository;
 import mbti.mbti_test.dto.CreateResultDto;
