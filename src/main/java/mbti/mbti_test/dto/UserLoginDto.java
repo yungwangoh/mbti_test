@@ -16,12 +16,4 @@ public class UserLoginDto {
         this.account = account;
         this.password = password;
     }
-
-    public String getAccount() {
-        return account;
-    }
-
-    public String getPassword() {
-        return password;
-    }
 }

@@ -42,11 +42,6 @@ public class ResultServiceImpl implements ResultService {
         return 0;
     }
 
-    @Override
-    public List<Result> findWhaleResults(ResultSearch resultSearch) {
-        return resultRepository.findAllByWhale(resultSearch);
-    }
-
     @Override // 0804 생성
     public List<Result> resultAll() {
         return resultRepository.findAll();
