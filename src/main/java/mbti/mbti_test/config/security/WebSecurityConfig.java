@@ -52,8 +52,9 @@ public class WebSecurityConfig {
                     .authorizeRequests()
                     .antMatchers("/api/admin/**").hasRole("ADMIN")
                     .antMatchers("/api/user/**").hasRole("USER")
+                    .antMatchers("/api/v3/join").permitAll()
                     .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() //0820 추가
-                    .anyRequest().permitAll() // 그 외 나머지 요청은 누구나 접근 가능
+                    .anyRequest().authenticated() // 그 외 나머지 요청은 누구나 접근 가능
                 .and()
                     .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class);

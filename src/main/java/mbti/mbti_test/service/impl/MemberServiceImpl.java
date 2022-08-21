@@ -9,6 +9,7 @@ import mbti.mbti_test.dto.UpdateMemberDto;
 import mbti.mbti_test.exception.MemberAlreadyExistException;
 import mbti.mbti_test.repository.MemberRepository;
 import mbti.mbti_test.service.MemberService;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
+@Configuration
 //0813 Hayoon
 //UserService -> MemberSerivceImpl로 새로 교체
 public class MemberServiceImpl implements MemberService {
