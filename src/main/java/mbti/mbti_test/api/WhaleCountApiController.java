@@ -27,9 +27,7 @@ public class WhaleCountApiController { //0805 ygo 생성
 
         List<WhaleCount> whaleList = whaleCountService.findAll();
 
-        List<CreateWhaleCountDto> whaleCountDtos = whaleList.stream()
-                .map(whaleCount -> new CreateWhaleCountDto(whaleCount))
-                .collect(toList());
+        List<CreateWhaleCountDto> whaleCountDtos = getCreateWhaleCountDtos(whaleList);
 
         return whaleCountDtos;
     }
@@ -41,9 +39,7 @@ public class WhaleCountApiController { //0805 ygo 생성
 
         List<WhaleCount> whaleCountList = whaleCountService.findAll();
 
-        List<CreateWhaleCountDto> whaleCountDtos = whaleCountList.stream()
-                .map(whaleCount -> new CreateWhaleCountDto(whaleCount))
-                .collect(toList());
+        List<CreateWhaleCountDto> whaleCountDtos = getCreateWhaleCountDtos(whaleCountList);
 
         return whaleCountDtos;
     }
@@ -52,9 +48,7 @@ public class WhaleCountApiController { //0805 ygo 생성
     public List<CreateWhaleCountDto> whaleDescending() {
         List<WhaleCount> whaleSortDescend = whaleCountService.whaleSortDescend();
 
-        List<CreateWhaleCountDto> whaleCountDtos = whaleSortDescend.stream()
-                .map(whaleCount -> new CreateWhaleCountDto(whaleCount))
-                .collect(toList());
+        List<CreateWhaleCountDto> whaleCountDtos = getCreateWhaleCountDtos(whaleSortDescend);
 
         return whaleCountDtos;
     }
@@ -64,9 +58,7 @@ public class WhaleCountApiController { //0805 ygo 생성
 
         List<WhaleCount> whaleCounts = whaleCountService.maxWhaleNameShare();
 
-        List<CreateWhaleCountDto> whaleCountDtos = whaleCounts.stream()
-                .map(whaleCount -> new CreateWhaleCountDto(whaleCount))
-                .collect(toList());
+        List<CreateWhaleCountDto> whaleCountDtos = getCreateWhaleCountDtos(whaleCounts);
 
         return whaleCountDtos;
     }
@@ -76,9 +68,7 @@ public class WhaleCountApiController { //0805 ygo 생성
 
         List<WhaleCount> whaleCounts = whaleCountService.minWhaleNameShare();
 
-        List<CreateWhaleCountDto> whaleCountDtos = whaleCounts.stream()
-                .map(whaleCount -> new CreateWhaleCountDto(whaleCount))
-                .collect(toList());
+        List<CreateWhaleCountDto> whaleCountDtos = getCreateWhaleCountDtos(whaleCounts);
 
         return whaleCountDtos;
     }
@@ -87,10 +77,15 @@ public class WhaleCountApiController { //0805 ygo 생성
     public List<CreateWhaleCountDto> whaleCompatibilityApi(@RequestBody @Valid CreateWhaleCountDto createWhaleCountDto) {
         List<WhaleCount> whaleCounts = whaleCountService.whaleCompatibility(createWhaleCountDto);
 
-        List<CreateWhaleCountDto> whaleCountDtos = whaleCounts.stream()
+        List<CreateWhaleCountDto> whaleCountDtos = getCreateWhaleCountDtos(whaleCounts);
+
+        return whaleCountDtos;
+    }
+
+    private List<CreateWhaleCountDto> getCreateWhaleCountDtos(List<WhaleCount> whaleList) {
+        List<CreateWhaleCountDto> whaleCountDtos = whaleList.stream()
                 .map(whaleCount -> new CreateWhaleCountDto(whaleCount))
                 .collect(toList());
-
         return whaleCountDtos;
     }
 }

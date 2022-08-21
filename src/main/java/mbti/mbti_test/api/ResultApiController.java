@@ -40,22 +40,18 @@ public class ResultApiController {
     public List<CreateResultDto> resultV2() {
         List<Result> results = resultService.resultAll();
 
-        List<CreateResultDto> resultDtos = results.stream()
+        return results.stream()
                 .map(result -> new CreateResultDto(result))
                 .collect(toList());
-
-        return resultDtos;
     }
 
     @GetMapping("/api/v3/result")
     public List<CreateResultDto> resultV3() { // fetch join으로 최적화.
         List<Result> results = resultService.findWithMemberWhale();
 
-        List<CreateResultDto> resultDtos = results.stream()
+        return results.stream()
                 .map(result -> new CreateResultDto(result))
                 .collect(toList());
-
-        return resultDtos;
     }
 
     @PostMapping("/api/algorithm/result")
@@ -76,11 +72,9 @@ public class ResultApiController {
         List<WhaleCount> whaleCounts = new ArrayList<>();
         whaleCounts.add(whaleCountService.findWhaleNameMbti(whaleName));
 
-        List<CreateWhaleCountDto> whaleCountDtos = whaleCounts.stream()
+        return whaleCounts.stream()
                 .map(whaleCount -> new CreateWhaleCountDto(whaleCount))
                 .collect(toList());
-
-        return whaleCountDtos;
     }
 
     // 0818 리팩토링
@@ -91,19 +85,15 @@ public class ResultApiController {
         String memberPk = jwtTokenProvider.getMemberPk(token);
         Optional<Member> account = memberLoginRepository.findByAccount(memberPk);
 
-        if(!account.isEmpty()) { // History 조회는 회원만 가능하다.
+        if(account.isPresent()) { // History 조회는 회원만 가능하다.
 
             List<Result> memberResultService = resultService.findMemberResultService(account.get().getId());
 
-            memberResultService.forEach(result -> {
-                resultListHistory.add(result);
-            });
+            resultListHistory.addAll(memberResultService);
 
-            List<CreateResultHistory> resultHistories = resultListHistory.stream()
+            return resultListHistory.stream()
                     .map(result -> new CreateResultHistory(result))
                     .collect(toList());
-
-            return resultHistories;
         } else throw new IllegalAccessError("비회원은 접근이 불가능합니다."); // 비회원 Error..
     }
 

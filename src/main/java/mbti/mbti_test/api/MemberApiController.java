@@ -92,13 +92,16 @@ public class MemberApiController {
     public String login(@RequestBody @Valid UserLoginDto userDto) {
         System.out.println(userDto.getAccount() + " " + userDto.getPassword());
         Optional<Member> byAccount = memberLoginRepository.findByAccount(userDto.getAccount());
-        UserDetails userDetails = customUserDetailService.loadUserByUsername(byAccount.get().getAccount());
-        if (!passwordEncoder.matches(userDto.getPassword(), userDetails.getPassword())) {
-            throw new IllegalArgumentException("잘못된 비밀번호입니다.");
-        }
 
-        log.info("\n로그인 성공!");
-        return jwtTokenProvider.createToken(userDetails.getUsername(), byAccount.get().getRoles());
+        if(byAccount.isPresent()) {
+            UserDetails userDetails = customUserDetailService.loadUserByUsername(byAccount.get().getAccount());
+            if (!passwordEncoder.matches(userDto.getPassword(), userDetails.getPassword())) {
+                throw new IllegalArgumentException("잘못된 비밀번호입니다.");
+            }
+
+            log.info("\n로그인 성공!");
+            return jwtTokenProvider.createToken(userDetails.getUsername(), byAccount.get().getRoles());
+        } else throw new IllegalStateException("계정이 없습니다.");
     }
 
     // 로그인
