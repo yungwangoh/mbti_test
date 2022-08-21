@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiResponses;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import mbti.mbti_test.config.security.user.CustomUserDetailService;
+import mbti.mbti_test.config.security.user.MemberAdapter;
 import mbti.mbti_test.dto.CreateMemberDto;
 import mbti.mbti_test.dto.TokenDto;
 import mbti.mbti_test.dto.UpdateMemberDto;
@@ -13,6 +14,10 @@ import mbti.mbti_test.service.impl.MemberServiceImpl;
 import mbti.mbti_test.dto.UserLoginDto;
 import mbti.mbti_test.exception.MemberAlreadyExistException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,9 +44,9 @@ public class MemberApiController {
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final MemberLoginRepository memberLoginRepository;
-    @Autowired private final MemberServiceImpl memberServiceImpl;
-
+    private final MemberServiceImpl memberServiceImpl;
     private final CustomUserDetailService customUserDetailService;
+    private final StringRedisTemplate redisTemplate;
 
     @GetMapping("/api/v2/members")
     public List<CreateMemberDto> memberV2() {
@@ -128,16 +133,21 @@ public class MemberApiController {
 
     // 로그아웃
     //0821 Hayoon
-//    @ApiOperation(value ="logout")
-//    @ApiResponses({@ApiResponse(code = 204, message = "success")})
-//    @GetMapping("/api/v4/logout")
-//    public ResponseEntity<String> logout(HttpServletRequest httpServletRequest) {
-//        String token = jwtTokenProvider
-//    }
+    @ApiOperation(value ="logout")
+    @ApiResponses({@ApiResponse(code = 204, message = "success")})
+    @GetMapping("/api/v4/logout")
+    public ResponseEntity<?> logout(@RequestHeader("X-AUTH-TOKEN") String jwt) {
+        //String token = jwtTokenProvider
+        ValueOperations<String, String> logoutValueOperations = redisTemplate.opsForValue();
+        logoutValueOperations.set(jwt, jwt);
+        MemberAdapter memberAdapter = (MemberAdapter) jwtTokenProvider.getAuthentication(jwt).getPrincipal();
+        log.info("로그아웃 유저 아이디: '{}'", memberAdapter.getUsername());
+        return new ResponseEntity<>(new DefaultResponseDto( 200,"로그아웃 되었습니다."), HttpStatus.OK);
+    }
     // 회원정보 수정
     //0813 Hayoon
     @PutMapping("/api/v2/members")
-    public UpdateMemberResponse updateMemberV2(@RequestHeader(value = "token") String token,
+    public UpdateMemberResponse updateMemberV2(@RequestHeader("X-AUTH-TOKEN") String token,
                                                @RequestBody @Valid UpdateMemberDto updateMemberDto) {
         String account = jwtTokenProvider.getMemberPk(token);
         Optional<Member> findMember = memberLoginRepository.findByAccount(account);
@@ -220,5 +230,18 @@ public class MemberApiController {
             this.account = account;
         }
     }
+
+    @Data
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    static class DefaultResponseDto {
+        private int serverStatus;
+        private String msg;
+
+        public DefaultResponseDto(int serverStatus, String msg) {
+            this.serverStatus = serverStatus;
+            this.msg = msg;
+        }
+    }
+
 }
 
