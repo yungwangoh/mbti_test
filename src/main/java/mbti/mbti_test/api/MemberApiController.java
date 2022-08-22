@@ -135,6 +135,7 @@ public class MemberApiController {
         return ResponseEntity.ok().body(new TokenResponse(token, "bearer", member.getAccount()));
     }
 
+    // loginV5 생성 access, refresh 토큰 발급 Dto로 반환
     @PostMapping("/api/v5/login")
     public LoginRepositoryDto loginV5(@RequestBody @Valid UserLoginDto userLoginDto) {
 

@@ -9,9 +9,10 @@ import java.time.Duration;
 
 @Service
 @RequiredArgsConstructor
-public class RedisService {
+public class RedisService { // redisService 추가 값 set, get 가능
 
-    private final RedisTemplate<String, String> redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate; // redisConfig의 redistemplate가 있는데 라이브러리가 잇어서 추가.
+                                                                // RedisConfig redisremplate과 같은 의미인지는 파악 못함.
 
     public void setValues(String key, String data) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();

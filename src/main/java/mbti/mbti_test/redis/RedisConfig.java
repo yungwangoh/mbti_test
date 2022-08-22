@@ -29,6 +29,8 @@ public class RedisConfig {
     }
 
     @Bean
+    // String 으로 받는것이 더 좋아보임. byte -> string
+    // RedisService RedisTemplate와 같은 의미???
     public RedisTemplate<String, String> redisTemplate() {
         RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());

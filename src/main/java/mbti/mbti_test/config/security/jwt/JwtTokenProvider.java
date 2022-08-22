@@ -45,11 +45,13 @@ public class JwtTokenProvider {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
+    // access token 생성
     public String createAccessToken(String account, List<String> userRole) {
         Long tokenInvalidTime = 1000L * 60 * 3;
         return this.createToken(account, userRole, tokenInvalidTime);
     }
 
+    // refresh token 생성
     public String createRefreshToken(String account, List<String> userRole) {
         Long tokenInvalidTime = 1000L * 60 * 60 * 24;
         String refreshToken = this.createToken(account, userRole, tokenInvalidTime);
@@ -58,6 +60,7 @@ public class JwtTokenProvider {
     }
 
     //JWT 토큰 생성
+    // 구글링 예제와 맞추기 위해 파라미터 하나 추가 (tokenValidTime) 만료 시간
     public String createToken(String memberPk, List<String> roles, Long tokenValidTime) {
         Claims claims = Jwts.claims().setSubject(memberPk); //JWT payload 에 저장되는 정보단위
         claims.put("roles", roles); //<key, Value> 쌍으로 저장
