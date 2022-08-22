@@ -32,8 +32,10 @@ public class JwtTokenProvider {
 
     private String secretKey = "mbti";
 
+    private String blackList = "blackList";
+
     //토큰 유효시간 60분
-    private long tokenValidTime = 60 * 60 * 1000L; // 1시간만 토큰 유효
+    private final long tokenValidTime = 60 * 60 * 1000L; // 1시간만 토큰 유효
 
     private final UserDetailsService userDetailsService;
 
@@ -57,6 +59,19 @@ public class JwtTokenProvider {
         String refreshToken = this.createToken(account, userRole, tokenInvalidTime);
         redisService.setValues(account, refreshToken, Duration.ofMillis(tokenInvalidTime));
         return refreshToken;
+    }
+
+    public void checkRefreshToken(String account, String refreshToken) {
+        String redisRT = redisService.getValues(account);
+        if(!refreshToken.equals(redisRT)) {
+            throw new IllegalStateException("토큰이 만료되었습니다.");
+        }
+    }
+
+    public void logout(String account, String accessToken) {
+        long expiredTokenTime = getExpiredTime(accessToken).getTime() - new Date().getTime();
+        redisService.setValues(blackList + accessToken, account, Duration.ofMillis(expiredTokenTime));
+        redisService.deleteValues(account); // Redis에서 유저 리프레시 토큰 삭제
     }
 
     //JWT 토큰 생성
@@ -100,5 +115,10 @@ public class JwtTokenProvider {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    // 토큰 만료시간 구하기
+    private Date getExpiredTime(String token) {
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getExpiration();
     }
 }

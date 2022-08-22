@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import mbti.mbti_test.config.security.access.AccessService;
 import mbti.mbti_test.config.security.jwt.JwtTokenProvider;
 import mbti.mbti_test.config.security.user.CustomUserDetailService;
 import mbti.mbti_test.config.security.user.MemberAdapter;
@@ -20,13 +21,12 @@ import mbti.mbti_test.service.MemberService;
 import mbti.mbti_test.service.impl.MemberServiceImpl;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -34,6 +34,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static org.springframework.http.HttpStatus.OK;
 
 //0803 hayoon
 @RestController
@@ -49,6 +51,7 @@ public class MemberApiController {
     private final CustomUserDetailService customUserDetailService;
     private final StringRedisTemplate redisTemplate;
 
+    private final AccessService accessService;
     private Long tokenInvalidTime = 1000L * 60 * 60; // 토큰 1시간
 
     @GetMapping("/api/v2/members")
@@ -160,7 +163,17 @@ public class MemberApiController {
         logoutValueOperations.set(jwt, jwt);
         MemberAdapter memberAdapter = (MemberAdapter) jwtTokenProvider.getAuthentication(jwt).getPrincipal();
         log.info("로그아웃 유저 아이디: '{}'", memberAdapter.getUsername());
-        return new ResponseEntity<>(new DefaultResponseDto( 200,"로그아웃 되었습니다."), HttpStatus.OK);
+        return new ResponseEntity<>(new DefaultResponseDto( 200,"로그아웃 되었습니다."), OK);
+    }
+
+    // 토큰 값을 이용한 로그아웃.
+    @GetMapping("/api/v5/logout")
+    public ResponseEntity<DefaultResponseDto> logout(@RequestParam("account") String account,
+                                                     HttpServletRequest httpServletRequest) {
+        String accessToken = httpServletRequest.getHeader("X-AUTH-TOKEN").substring(7);
+        accessService.logout(account, accessToken);
+        DefaultResponseDto response = new DefaultResponseDto(200, "로그아웃 완료");
+        return new ResponseEntity<>(response, OK);
     }
 
     // 회원정보 수정

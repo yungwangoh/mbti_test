@@ -1,15 +1,16 @@
 package mbti.mbti_test.api;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import mbti.mbti_test.config.security.jwt.JwtTokenProvider;
-import mbti.mbti_test.config.security.user.CustomUserDetailService;
 import mbti.mbti_test.config.security.user.MemberLoginRepository;
-import mbti.mbti_test.dto.CreateResultDto;
-import mbti.mbti_test.dto.CreateWhaleCountDto;
 import mbti.mbti_test.domain.Member;
 import mbti.mbti_test.domain.Result;
 import mbti.mbti_test.domain.WhaleCount;
-import mbti.mbti_test.service.MemberService;
+import mbti.mbti_test.dto.CreateResultDto;
+import mbti.mbti_test.dto.CreateWhaleCountDto;
 import mbti.mbti_test.service.ResultService;
 import mbti.mbti_test.service.WhaleCountService;
 import mbti.mbti_test.service.impl.WhaleAlgorithm;
@@ -21,18 +22,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequiredArgsConstructor
 public class ResultApiController {
 
-    private final MemberService memberService;
     private final MemberLoginRepository memberLoginRepository;
     private final ResultService resultService;
     private final WhaleCountService whaleCountService;
 
-    private final CustomUserDetailService findByAccount;
     private final WhaleAlgorithm whaleAlgorithm;
     private final JwtTokenProvider jwtTokenProvider;
 
