@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mbti.mbti_test.redis.RedisService;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,7 +17,9 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import java.time.Duration;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -34,14 +37,28 @@ public class JwtTokenProvider {
 
     private final UserDetailsService userDetailsService;
 
+    private final RedisService redisService;
+
     //객체 초기화, secretKey를 Base64로 인코딩한다.
     @PostConstruct
     protected void init() {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
+    public String createAccessToken(String account, List<String> userRole) {
+        Long tokenInvalidTime = 1000L * 60 * 3;
+        return this.createToken(account, userRole, tokenInvalidTime);
+    }
+
+    public String createRefreshToken(String account, List<String> userRole) {
+        Long tokenInvalidTime = 1000L * 60 * 60 * 24;
+        String refreshToken = this.createToken(account, userRole, tokenInvalidTime);
+        redisService.setValues(account, refreshToken, Duration.ofMillis(tokenInvalidTime));
+        return refreshToken;
+    }
+
     //JWT 토큰 생성
-    public String createToken(String memberPk, List<String> roles) {
+    public String createToken(String memberPk, List<String> roles, Long tokenValidTime) {
         Claims claims = Jwts.claims().setSubject(memberPk); //JWT payload 에 저장되는 정보단위
         claims.put("roles", roles); //<key, Value> 쌍으로 저장
         Date now = new Date();
