@@ -49,13 +49,13 @@ public class JwtTokenProvider {
 
     // access token 생성
     public String createAccessToken(String account, List<String> userRole) {
-        Long tokenInvalidTime = 1000L * 60 * 3;
+        Long tokenInvalidTime = 1000L * 60 * 3; // Hayoon 3분 ?
         return this.createToken(account, userRole, tokenInvalidTime);
     }
 
     // refresh token 생성
     public String createRefreshToken(String account, List<String> userRole) {
-        Long tokenInvalidTime = 1000L * 60 * 60 * 24;
+        Long tokenInvalidTime = 1000L * 60 * 60 * 24; // Hayoon 24시간
         String refreshToken = this.createToken(account, userRole, tokenInvalidTime);
         redisService.setValues(account, refreshToken, Duration.ofMillis(tokenInvalidTime));
         return refreshToken;
@@ -69,8 +69,8 @@ public class JwtTokenProvider {
     }
 
     public void logout(String account, String accessToken) {
-        long expiredTokenTime = getExpiredTime(accessToken).getTime() - new Date().getTime();
-        redisService.setValues(blackList + accessToken, account, Duration.ofMillis(expiredTokenTime));
+        long expiredAccessTokenTime = getExpiredTime(accessToken).getTime() - new Date().getTime();
+        redisService.setValues(blackList + accessToken, account, Duration.ofMillis(expiredAccessTokenTime));
         redisService.deleteValues(account); // Redis에서 유저 리프레시 토큰 삭제
     }
 
