@@ -170,7 +170,7 @@ public class MemberApiController {
     @GetMapping("/api/v5/logout")
     public ResponseEntity<DefaultResponseDto> logout(@RequestParam("account") String account,
                                                      HttpServletRequest httpServletRequest) {
-        String accessToken = httpServletRequest.getHeader("X-AUTH-TOKEN").substring(7);
+        String accessToken = httpServletRequest.getHeader("X-AUTH-TOKEN");
         accessService.logout(account, accessToken);
         DefaultResponseDto response = new DefaultResponseDto(200, "로그아웃 완료");
         return new ResponseEntity<>(response, OK);
