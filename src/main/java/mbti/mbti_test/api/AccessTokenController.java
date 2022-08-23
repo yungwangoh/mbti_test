@@ -19,9 +19,9 @@ public class AccessTokenController { // access token 재발급 위한 컨트롤�
     private final AccessService accessService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @GetMapping("/api/access")
+    @GetMapping("/api/reissue")
     public ResponseEntity<LoginRepositoryDto> reIssue(@RequestParam("account") String account,
-                                                      @RequestHeader("Refresh-Token") String refreshToken) {
+                                                      @RequestHeader("refresh-Token") String refreshToken) {
 
         LoginRepositoryDto loginRepositoryDto = accessService.reIssueAccessToken(account, refreshToken);
         return new ResponseEntity<>(loginRepositoryDto, OK);
