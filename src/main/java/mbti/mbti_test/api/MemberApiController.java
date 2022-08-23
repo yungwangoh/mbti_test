@@ -190,15 +190,10 @@ public class MemberApiController {
                 findMember.get().getUpdateDateTime());
     }
 
-    /*
-     * AccessToken이 만료되었을 때 토큰(AccessToken , RefreshToken) 재발급해주는 메서드
-     */
-//    @PostMapping("/reissue")
-//    public ResponseEntity<TokenDto> reissue(
-//            @RequestBody @Valid TokenDto requestTokenDto) {
-//        TokenDto tokenDto = authService
-//                .reissue(requestTokenDto.getAccessToken(), requestTokenDto.getRefreshToken());
-//        return ResponseEntity.ok(new TokenDto());
+//    @GetMapping("/api/v1/findAccount")
+//    public ResponseEntity<DefaultResponseDto> findAccountByEmail(@RequestBody("email") String email) {
+//
+//        return new ResponseEntity<>(response, OK);
 //    }
 
     //0810 Hayoon
