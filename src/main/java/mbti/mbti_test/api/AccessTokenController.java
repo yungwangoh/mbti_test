@@ -17,11 +17,13 @@ public class AccessTokenController { // access token 재발급 위한 컨트롤�
 
     private final AccessService accessService;
 
-    @GetMapping("/api/access")
-    public ResponseEntity<LoginRepositoryDto> reIssue(@RequestParam("account") String account,
-                                                      @RequestHeader("Refresh-Token") String refreshToken) {
-
+    //0823 Hayoon
+    //AccessToken 재발급
+    @GetMapping("/api/v1/re-issue")
+    public ResponseEntity<LoginRepositoryDto> reIssue(@RequestParam("refreshToken") String refreshToken,
+                                                      @RequestParam("account") String account) {
         LoginRepositoryDto loginRepositoryDto = accessService.reIssueAccessToken(account, refreshToken);
         return new ResponseEntity<>(loginRepositoryDto, OK);
     }
+
 }

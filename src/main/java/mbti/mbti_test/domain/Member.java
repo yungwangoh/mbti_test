@@ -86,6 +86,12 @@ public class Member implements UserDetails {
         //result.setMemberStatus(MemberStatus.MEMBER);
     }
 
+    //0823 Hayoon
+    //changePwd 메서드 생성
+    public void changePwdMember(String pwd) {
+        this.pwd = pwd;
+        this.updateDateTime = LocalDateTime.now();
+    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
