@@ -12,10 +12,7 @@ import mbti.mbti_test.config.security.user.MemberAdapter;
 import mbti.mbti_test.config.security.user.MemberLoginRepository;
 import mbti.mbti_test.domain.Address;
 import mbti.mbti_test.domain.Member;
-import mbti.mbti_test.dto.CreateMemberDto;
-import mbti.mbti_test.dto.LoginRepositoryDto;
-import mbti.mbti_test.dto.UpdateMemberDto;
-import mbti.mbti_test.dto.UserLoginDto;
+import mbti.mbti_test.dto.*;
 import mbti.mbti_test.exception.MemberAlreadyExistException;
 import mbti.mbti_test.service.MemberService;
 import mbti.mbti_test.service.impl.MemberServiceImpl;
@@ -101,7 +98,7 @@ public class MemberApiController {
      * @return
      */
 
-    // 로그인
+    //로그인
     //0808 Hayoon
     //https://jwt.io/ 에서 Encoder -> Decoder(Payload) 확인가능.
     @PostMapping("/api/v3/login")
@@ -120,7 +117,7 @@ public class MemberApiController {
         } else throw new IllegalStateException("계정이 없습니다.");
     }
 
-    // 로그인
+    //로그인
     //0820 Hayoon
     //https://jwt.io/ 에서 Encoder -> Decoder(Payload) 확인가능.
     //Bearer Token 생성
@@ -138,7 +135,7 @@ public class MemberApiController {
         return ResponseEntity.ok().body(new TokenResponse(token, "bearer", member.getAccount()));
     }
 
-    // loginV5 생성 access, refresh 토큰 발급 Dto로 반환
+    //loginV5 생성 access, refresh 토큰 발급 Dto로 반환
     @PostMapping("/api/v5/login")
     public LoginRepositoryDto loginV5(@RequestBody @Valid UserLoginDto userLoginDto) {
 
@@ -152,7 +149,7 @@ public class MemberApiController {
         return new LoginRepositoryDto(accessToken, refreshToken);
     }
 
-    // 로그아웃
+    //로그아웃
     //0821 Hayoon
     @ApiOperation(value ="logout")
     @ApiResponses({@ApiResponse(code = 204, message = "success")})
@@ -166,17 +163,19 @@ public class MemberApiController {
         return new ResponseEntity<>(new DefaultResponseDto( 200,"로그아웃 되었습니다."), OK);
     }
 
-    // 토큰 값을 이용한 로그아웃.
+    //토큰 값을 이용한 로그아웃.
+    @ApiOperation(value ="logout")
+    @ApiResponses({@ApiResponse(code = 204, message = "success")})
     @GetMapping("/api/v5/logout")
     public ResponseEntity<DefaultResponseDto> logout(@RequestParam("account") String account,
                                                      HttpServletRequest httpServletRequest) {
-        String accessToken = httpServletRequest.getHeader("X-AUTH-TOKEN");
+        String accessToken = httpServletRequest.getHeader("X-AUTH-TOKEN"); //accessToken 값
         accessService.logout(account, accessToken);
         DefaultResponseDto response = new DefaultResponseDto(200, "로그아웃 완료");
         return new ResponseEntity<>(response, OK);
     }
 
-    // 회원정보 수정
+    //회원정보 수정
     //0813 Hayoon
     @PutMapping("/api/v2/members")
     public UpdateMemberResponse updateMemberV2(@RequestHeader("X-AUTH-TOKEN") String token,
@@ -190,11 +189,27 @@ public class MemberApiController {
                 findMember.get().getUpdateDateTime());
     }
 
-//    @GetMapping("/api/v1/findAccount")
-//    public ResponseEntity<DefaultResponseDto> findAccountByEmail(@RequestBody("email") String email) {
-//
-//        return new ResponseEntity<>(response, OK);
-//    }
+    //0823 Hayoon
+    //회원 아이디 찾기
+    @GetMapping("/api/v1/findAccount")
+    public ResponseEntity<String> findAccountByEmail(@RequestParam("email") String email) {
+        Optional<Member> findMemberByEmail = memberLoginRepository.findByEmail(email);
+        String account = findMemberByEmail.get().getAccount();
+        return new ResponseEntity<>(account, OK);
+    }
+
+    //0823 Hayoon
+    //회원 비밀번호 찾기
+    // 새 비밀번호, 새비밀번호 확인 로직 만들어야함(아직 미구현)
+    @PostMapping("/api/v1/findPassword")
+    public ResponseEntity<String> findPwdByAccount(@RequestBody @Valid String account,
+                                                   ChangePwdDto changePwdDto) throws Exception {
+        Optional<Member> findMemberByAccount = memberLoginRepository.findByAccount(account);
+        memberService.changePwd(findMemberByAccount, changePwdDto);
+
+        log.info("password :" + changePwdDto);
+        return new ResponseEntity<>(changePwdDto.getPassword(), OK);
+    }
 
     //0810 Hayoon
     //User 외 접근 제한을 걸어둔 리소스에 요청을 보내 결과 Response 확인

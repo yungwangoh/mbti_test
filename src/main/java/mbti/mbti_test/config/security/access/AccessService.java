@@ -26,7 +26,7 @@ public class AccessService { // access token 서비스.
     public LoginRepositoryDto reIssueAccessToken(String account, String refreshToken) {
         Member member = memberLoginRepository.findByAccount(account)
                 .orElseThrow(() -> new IllegalStateException("존재하지 않는 유저입니다."));
-        String accessToken = jwtTokenProvider.createAccessToken(account, member.getRoles());
+        String accessToken = jwtTokenProvider.createAccessToken(member.getAccount(), member.getRoles());
         return new LoginRepositoryDto(accessToken, refreshToken);
     }
 

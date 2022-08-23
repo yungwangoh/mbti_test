@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import mbti.mbti_test.config.security.user.MemberLoginRepository;
 import mbti.mbti_test.domain.Member;
 import mbti.mbti_test.domain.MemberStatus;
+import mbti.mbti_test.dto.ChangePwdDto;
 import mbti.mbti_test.dto.CreateMemberDto;
 import mbti.mbti_test.dto.UpdateMemberDto;
 import mbti.mbti_test.exception.MemberAlreadyExistException;
@@ -87,4 +88,13 @@ public class MemberServiceImpl implements MemberService {
             throw new MemberAlreadyExistException("이미 존재하는 회원입니다.");
         }
     }
+
+    @Override
+    @Transactional
+    public void changePwd(Optional<Member> findMember, ChangePwdDto changePwdDto) throws Exception {
+        Member member  = memberRepository.findOne(findMember.get().getId());
+        member.changePwdMember(passwordEncoder.encode(changePwdDto.getPassword()));
+    }
+
+
 }

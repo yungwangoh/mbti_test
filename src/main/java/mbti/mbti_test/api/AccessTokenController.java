@@ -21,8 +21,10 @@ public class AccessTokenController { // access token 재발급 위한 컨트롤�
 
     @GetMapping("/api/access")
     public ResponseEntity<LoginRepositoryDto> reIssue(@RequestParam("account") String account,
-                                                      @RequestHeader("X-AUTH-TOKEN") String refreshToken) {
+                                                      @RequestHeader("Refresh-Token") String refreshToken) {
+
         LoginRepositoryDto loginRepositoryDto = accessService.reIssueAccessToken(account, refreshToken);
         return new ResponseEntity<>(loginRepositoryDto, OK);
     }
+
 }
