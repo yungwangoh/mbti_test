@@ -6,9 +6,12 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mbti.mbti_test.dto.LoginRepositoryDto;
 import mbti.mbti_test.redis.RedisService;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,6 +42,8 @@ public class JwtTokenProvider {
 
     private final UserDetailsService userDetailsService;
 
+    private final LoginRepositoryDto loginRepositoryDto;
+
     private final RedisService redisService;
 
     //객체 초기화, secretKey를 Base64로 인코딩한다.
@@ -49,23 +54,30 @@ public class JwtTokenProvider {
 
     // access token 생성
     public String createAccessToken(String account, List<String> userRole) {
-        Long tokenInvalidTime = 1000L * 60 * 3; // Hayoon 3분 ?
+        Long tokenInvalidTime = 1000L * 60 * 30; // Hayoon 30분
         return this.createToken(account, userRole, tokenInvalidTime);
     }
 
     // refresh token 생성
     public String createRefreshToken(String account, List<String> userRole) {
-        Long tokenInvalidTime = 1000L * 60 * 60 * 24; // Hayoon 24시간
+        Long tokenInvalidTime = 1000L * 60 * 60 * 24 ; // Hayoon 1일
         String refreshToken = this.createToken(account, userRole, tokenInvalidTime);
         redisService.setValues(account, refreshToken, Duration.ofMillis(tokenInvalidTime));
         return refreshToken;
     }
 
-    public void checkRefreshToken(String account, String refreshToken) {
+    public boolean checkRefreshToken(String account, String refreshToken) { // refreshToken 유효성 검사
         String redisRT = redisService.getValues(account);
-        if(!refreshToken.equals(redisRT)) {
-            throw new IllegalStateException("토큰이 만료되었습니다.");
-        }
+        if(!refreshToken.equals(redisRT))
+            return true; // 토큰 만료
+        return false; // 토큰 존재
+    }
+
+    public boolean checkAccessToken(String accessToken) { // accessToken 유효성 검사
+        String Token = loginRepositoryDto.getAccessToken();
+        if(!Token.equals(accessToken))
+            return true; // 토큰 만료
+        return false; // 토큰 존재
     }
 
     public void logout(String account, String accessToken) {

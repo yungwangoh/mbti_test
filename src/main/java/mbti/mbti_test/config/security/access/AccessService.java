@@ -19,7 +19,7 @@ public class AccessService { // access token 서비스.
     private final PasswordEncoder passwordEncoder;
 
     /*  토큰 재발급
-    1. 전달받은 유저의 아이디(Email)로 유저가 존재하는지 확인한다.
+    1. 전달받은 유저의 아이디로 유저가 존재하는지 확인한다.
     2. RefreshToken이 유효한지 체크한다.
     3. AccessToken을 발급하여 기존 RefreshToken과 함께 응답한다.
      */
