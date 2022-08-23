@@ -96,6 +96,6 @@ public class ResultServiceImpl implements ResultService {
         } else if (mbti.equals("ENTJ")) {
             return ENTJ;
         } else
-            return null;
+            throw new RuntimeException("찾는 고래가 없습니다.");
     }
 }

@@ -101,7 +101,7 @@ public class ResultApiController {
         String memberPk = jwtTokenProvider.getMemberPk(token);
         Optional<Member> account = memberLoginRepository.findByAccount(memberPk);
 
-        if(!account.isEmpty()) { // 회원일 경우
+        if(account.isPresent()) { // 회원일 경우
             WhaleCount whaleNameMbti = whaleCountService.findWhaleNameMbti(createWhaleCountDto.getWhaleName());
             Result result = Result.createResult(account.get(), whaleNameMbti);
             whaleAlgorithm.AllSharePoints(whaleCountService.findAll());

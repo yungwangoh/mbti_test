@@ -19,7 +19,7 @@ public enum MbtiList {
     ISFJ("밍크고래"),
     ESTJ("범고래"),
     ISTP("귀신고래"),
-    ISFP("항유고래"),
+    ISFP("향유고래"),
     ESTP("낫돌고래"),
     ESFP("혹등고래"),
     ESFJ("남방참고래");
