@@ -9,8 +9,5 @@ import lombok.NoArgsConstructor;
 public class ChangePwdDto {
 
     private String password;
-
-    public ChangePwdDto(String password) {
-        this.password = password;
-    }
+    private String checkPassword;
 }

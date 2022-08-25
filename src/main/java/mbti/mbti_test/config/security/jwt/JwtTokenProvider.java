@@ -10,8 +10,6 @@ import mbti.mbti_test.dto.LoginRepositoryDto;
 import mbti.mbti_test.redis.RedisService;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,7 +20,6 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
 import java.util.Base64;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -34,16 +31,10 @@ public class JwtTokenProvider {
     private final StringRedisTemplate redisTemplate;
 
     private String secretKey = "mbti";
-
-    private String blackList = "blackList";
-
-    //토큰 유효시간 60분
-    private final long tokenValidTime = 60 * 60 * 1000L; // 1시간만 토큰 유효
+    private final String blackList = "blackList";
 
     private final UserDetailsService userDetailsService;
-
-    private final LoginRepositoryDto loginRepositoryDto;
-
+    private LoginRepositoryDto loginRepositoryDto;
     private final RedisService redisService;
 
     //객체 초기화, secretKey를 Base64로 인코딩한다.
@@ -60,7 +51,7 @@ public class JwtTokenProvider {
 
     // refresh token 생성
     public String createRefreshToken(String account, List<String> userRole) {
-        Long tokenInvalidTime = 1000L * 60 * 60 * 24 ; // Hayoon 1일
+        long tokenInvalidTime = 1000L * 60 * 60 * 24; // Hayoon 1일
         String refreshToken = this.createToken(account, userRole, tokenInvalidTime);
         redisService.setValues(account, refreshToken, Duration.ofMillis(tokenInvalidTime));
         return refreshToken;
@@ -68,16 +59,14 @@ public class JwtTokenProvider {
 
     public boolean checkRefreshToken(String account, String refreshToken) { // refreshToken 유효성 검사
         String redisRT = redisService.getValues(account);
-        if(!refreshToken.equals(redisRT))
-            return true; // 토큰 만료
-        return false; // 토큰 존재
+        return !refreshToken.equals(redisRT); // 토큰 만료
+// 토큰 존재
     }
 
     public boolean checkAccessToken(String accessToken) { // accessToken 유효성 검사
         String Token = loginRepositoryDto.getAccessToken();
-        if(!Token.equals(accessToken))
-            return true; // 토큰 만료
-        return false; // 토큰 존재
+        return !Token.equals(accessToken); // 토큰 만료
+// 토큰 존재
     }
 
     public void logout(String account, String accessToken) {
@@ -87,7 +76,8 @@ public class JwtTokenProvider {
     }
 
     //JWT 토큰 생성
-    // 구글링 예제와 맞추기 위해 파라미터 하나 추가 (tokenValidTime) 만료 시간
+    //구글링 예제와 맞추기 위해 파라미터 하나 추가 (tokenValidTime) 만료 시간
+    //0825 Hayoon Token이 복호화가 되지가 않음. 파라미터 문제 ?
     public String createToken(String memberPk, List<String> roles, Long tokenValidTime) {
         Claims claims = Jwts.claims().setSubject(memberPk); //JWT payload 에 저장되는 정보단위
         claims.put("roles", roles); //<key, Value> 쌍으로 저장
