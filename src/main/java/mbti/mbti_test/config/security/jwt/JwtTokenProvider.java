@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mbti.mbti_test.dto.LoginRepositoryDto;
 import mbti.mbti_test.redis.RedisService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,12 +31,12 @@ public class JwtTokenProvider {
 
     private final StringRedisTemplate redisTemplate;
 
-    private String secretKey = "mbti";
-    private final String blackList = "blackList";
+    private String secretKey = "iwilldomybestforproject";
 
     private final UserDetailsService userDetailsService;
     private LoginRepositoryDto loginRepositoryDto;
     private final RedisService redisService;
+
 
     //객체 초기화, secretKey를 Base64로 인코딩한다.
     @PostConstruct
@@ -71,6 +72,8 @@ public class JwtTokenProvider {
 
     public void logout(String account, String accessToken) {
         long expiredAccessTokenTime = getExpiredTime(accessToken).getTime() - new Date().getTime();
+        log.info("시간:" + expiredAccessTokenTime);
+        String blackList = "blackList";
         redisService.setValues(blackList + accessToken, account, Duration.ofMillis(expiredAccessTokenTime));
         redisService.deleteValues(account); // Redis에서 유저 리프레시 토큰 삭제
     }
@@ -78,7 +81,7 @@ public class JwtTokenProvider {
     //JWT 토큰 생성
     //구글링 예제와 맞추기 위해 파라미터 하나 추가 (tokenValidTime) 만료 시간
     //0825 Hayoon Token이 복호화가 되지가 않음. 파라미터 문제 ?
-    public String createToken(String memberPk, List<String> roles, Long tokenValidTime) {
+    public String createToken(String memberPk, List<String> roles, long tokenValidTime) {
         Claims claims = Jwts.claims().setSubject(memberPk); //JWT payload 에 저장되는 정보단위
         claims.put("roles", roles); //<key, Value> 쌍으로 저장
         Date now = new Date();

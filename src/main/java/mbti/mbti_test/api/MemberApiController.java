@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.OK;
 
-//0803 Hayoon
+//0803 hayoon
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -49,15 +49,17 @@ public class MemberApiController {
     private final StringRedisTemplate redisTemplate;
 
     private final AccessService accessService;
-    private final Long tokenInvalidTime = 1000L * 60 * 60; // 토큰 1시간
+    private Long tokenInvalidTime = 1000L * 60 * 60; // 토큰 1시간
 
     @GetMapping("/api/v2/members")
     public List<CreateMemberDto> memberV2() {
         List<Member> members = memberService.findMembers();
 
-        return members.stream()
-                .map(CreateMemberDto::new)
+        List<CreateMemberDto> createMemberDtos = members.stream()
+                .map(member -> new CreateMemberDto(member))
                 .collect(Collectors.toList());
+
+        return createMemberDtos;
     }
 
     @Data
@@ -75,6 +77,10 @@ public class MemberApiController {
 
         log.info("\nmemberId: " + memberId + " memberDtoName: " + createMemberDto.getName());
         return new CreateMemberResponse(memberId, createMemberDto.getName());
+
+//        return memberId != null ?
+//                ResponseEntity.ok().body("회원가입을 축하합니다.") :
+//                ResponseEntity.badRequest().build();
     }
     /**
      * {
@@ -88,6 +94,8 @@ public class MemberApiController {
         "email": "abcd1234@naver.com",
         "name": "AAA"
         }
+     * @param userDto
+     * @return
      */
 
     //로그인
@@ -169,10 +177,9 @@ public class MemberApiController {
 
     //회원정보 수정
     //0813 Hayoon
-    @PatchMapping("/api/v2/members")
-    public UpdateMemberResponse updateMemberV2(@RequestBody @Valid UpdateMemberDto updateMemberDto,
-                                               HttpServletRequest httpServletRequest) {
-        String token = httpServletRequest.getHeader("X-AUTH-TOKEN"); //accessToken 값
+    @PutMapping("/api/v2/members")
+    public UpdateMemberResponse updateMemberV2(@RequestHeader("X-AUTH-TOKEN") String token,
+                                               @RequestBody @Valid UpdateMemberDto updateMemberDto) {
         String account = jwtTokenProvider.getMemberPk(token);
         Optional<Member> findMember = memberLoginRepository.findByAccount(account);
         memberService.updateMember(findMember, updateMemberDto);
@@ -185,38 +192,22 @@ public class MemberApiController {
     //0823 Hayoon
     //회원 아이디 찾기
     @GetMapping("/api/v1/findAccount")
-    public ResponseEntity<String> findAccountByEmail(@RequestBody @Valid String email) {
+    public ResponseEntity<String> findAccountByEmail(@RequestParam("email") String email) {
         Optional<Member> findMemberByEmail = memberLoginRepository.findByEmail(email);
-        log.info(String.valueOf(findMemberByEmail));
-        if (findMemberByEmail.isPresent()) { //DB에 이메일존재
-            return new ResponseEntity<>(findMemberByEmail.get().getAccount(), OK);
-        }
-        else throw new IllegalStateException("존재하지 않는 계정입니다.");
+        String account = findMemberByEmail.get().getAccount();
+        return new ResponseEntity<>(account, OK);
     }
 
-    //0825 Hayoon
-    //회원 비밀번호 찾기위한 계정확인
-    @PostMapping("/api/v1/checkAddress")
-    public ResponseEntity<String> checkAddressForPassword(@RequestBody @Valid String account) throws Exception {
-        Optional<Member> findMemberByAccount = memberLoginRepository.findByAccount(account);
-        if (findMemberByAccount.isPresent()) { //DB에 계정존재
-            return new ResponseEntity<>("계정이 확인되었습니다", OK);
-        }
-        else throw new IllegalStateException("존재하지 않는 계정입니다.");
-    }
-    //0825 Hayoon
+    //0823 Hayoon
     //회원 비밀번호 찾기
-    //DB 두번접근하는게 비효율적 -> 어떻게 ?
+    // 새 비밀번호, 새비밀번호 확인 로직 만들어야함(아직 미구현)
     @PostMapping("/api/v1/findPassword")
-    public ResponseEntity<String> findPwdByAccount(@RequestParam("account") String account,
-                                                   @RequestBody @Valid ChangePwdDto changePwdDto) throws Exception {
+    public ResponseEntity<String> findPwdByAccount(@RequestBody @Valid String account,
+                                                   ChangePwdDto changePwdDto) throws Exception {
         Optional<Member> findMemberByAccount = memberLoginRepository.findByAccount(account);
-        if (changePwdDto.getPassword().equals(changePwdDto.getCheckPassword())) //새비밀번호,새비밀번호확인이 일치
-            memberService.changePwd(findMemberByAccount, changePwdDto);
-        else
-            throw new IllegalStateException("새 비밀번호와 새 비밀번호 확인이 일치하지 않습니다.");
-        log.info("password :" + changePwdDto.getPassword() +
-                "\n checkPassword :" + changePwdDto.getCheckPassword());
+        memberService.changePwd(findMemberByAccount, changePwdDto);
+
+        log.info("password :" + changePwdDto);
         return new ResponseEntity<>(changePwdDto.getPassword(), OK);
     }
 
