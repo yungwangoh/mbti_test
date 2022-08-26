@@ -113,7 +113,7 @@ public class MemberApiController {
             }
 
             log.info("\n로그인 성공!");
-            return jwtTokenProvider.createToken(userDetails.getUsername(), byAccount.get().getRoles(), tokenInvalidTime);
+            return jwtTokenProvider.createToken(byAccount.get().getAccount(), byAccount.get().getRoles(), tokenInvalidTime);
         } else throw new IllegalStateException("계정이 없습니다.");
     }
 

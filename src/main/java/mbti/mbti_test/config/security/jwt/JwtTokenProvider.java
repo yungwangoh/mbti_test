@@ -43,7 +43,7 @@ public class JwtTokenProvider {
 
     private final UserDetailsService userDetailsService;
 
-    private final LoginRepositoryDto loginRepositoryDto;
+    private LoginRepositoryDto loginRepositoryDto;
 
     private final RedisService redisService;
 
