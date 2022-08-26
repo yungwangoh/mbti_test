@@ -96,5 +96,10 @@ public class MemberServiceImpl implements MemberService {
         member.changePwdMember(passwordEncoder.encode(changePwdDto.getPassword()));
     }
 
+    @Override
+    public Optional<Member> findMemberByEmail(String email) {
+        return memberRepository.findByEmail(email);
+    }
+
 
 }

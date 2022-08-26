@@ -192,10 +192,12 @@ public class MemberApiController {
     //0823 Hayoon
     //회원 아이디 찾기
     @GetMapping("/api/v1/findAccount")
-    public ResponseEntity<String> findAccountByEmail(@RequestParam("email") String email) {
+    public ResponseEntity<String> findAccountByEmail(@RequestBody String email) {
         Optional<Member> findMemberByEmail = memberLoginRepository.findByEmail(email);
-        String account = findMemberByEmail.get().getAccount();
-        return new ResponseEntity<>(account, OK);
+        log.info("이메일: " + findMemberByEmail.get().getAccount());
+        if (findMemberByEmail.isPresent())
+            return new ResponseEntity<>(findMemberByEmail.get().getAccount(), OK);
+        else throw new IllegalStateException("이메일이 존재하지 않습니다.");
     }
 
     //0823 Hayoon
@@ -205,10 +207,12 @@ public class MemberApiController {
     public ResponseEntity<String> findPwdByAccount(@RequestBody @Valid String account,
                                                    ChangePwdDto changePwdDto) throws Exception {
         Optional<Member> findMemberByAccount = memberLoginRepository.findByAccount(account);
-        memberService.changePwd(findMemberByAccount, changePwdDto);
+        if (findMemberByAccount.isPresent()) {
+            memberService.changePwd(findMemberByAccount, changePwdDto);
+            return new ResponseEntity<>(changePwdDto.getPassword(), OK);
+        } else throw new IllegalStateException("계정이 존재하지 않습니다.");
+        //log.info("password :" + changePwdDto);
 
-        log.info("password :" + changePwdDto);
-        return new ResponseEntity<>(changePwdDto.getPassword(), OK);
     }
 
     //0810 Hayoon

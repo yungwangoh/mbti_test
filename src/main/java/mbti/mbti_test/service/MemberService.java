@@ -19,4 +19,6 @@ public interface MemberService {
     void updateMember(Optional<Member> findMember, UpdateMemberDto updateMemberDto);
     void userValidation(CreateMemberDto createMemberDto) throws MemberAlreadyExistException;
     void changePwd(Optional<Member> findMember, ChangePwdDto changePwdDto) throws Exception;
+
+    Optional<Member> findMemberByEmail(String email);
 }
