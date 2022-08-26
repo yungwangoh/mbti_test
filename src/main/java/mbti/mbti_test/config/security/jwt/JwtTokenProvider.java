@@ -37,12 +37,9 @@ public class JwtTokenProvider {
 
     private String blackList = "blackList";
 
-    //토큰 유효시간 60분
-    private final long tokenValidTime = 60 * 60 * 1000L; // 1시간만 토큰 유효
-
     private final UserDetailsService userDetailsService;
 
-    private final LoginRepositoryDto loginRepositoryDto;
+    private LoginRepositoryDto loginRepositoryDto;
 
     private final RedisService redisService;
 
@@ -131,7 +128,8 @@ public class JwtTokenProvider {
     }
 
     // 토큰 만료시간 구하기
-    private Date getExpiredTime(String token) {
+    public Date getExpiredTime(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getExpiration();
     }
+
 }
