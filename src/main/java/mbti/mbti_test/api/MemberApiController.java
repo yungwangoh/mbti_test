@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
 //0803 hayoon
@@ -192,25 +193,36 @@ public class MemberApiController {
     //0823 Hayoon
     //회원 아이디 찾기
     @GetMapping("/api/v1/findAccount")
-    public ResponseEntity<String> findAccountByEmail(@RequestBody String email) {
-        Optional<Member> findMemberByEmail = memberLoginRepository.findByEmail(email);
+    public ResponseEntity<String> findAccountByEmail(@RequestBody @Valid EmailDto emailDto) {
+        Optional<Member> findMemberByEmail = memberLoginRepository.findByEmail(emailDto.getEmail());
         log.info("이메일: " + findMemberByEmail.get().getAccount());
         if (findMemberByEmail.isPresent())
             return new ResponseEntity<>(findMemberByEmail.get().getAccount(), OK);
-        else throw new IllegalStateException("이메일이 존재하지 않습니다.");
+        else {
+            throw new IllegalStateException("이메일이 존재하지 않습니다.");
+            new ResponseEntity<>("이메일이 존재하지 않습니다", NOT_FOUND);
+        }
     }
 
     //0823 Hayoon
     //회원 비밀번호 찾기
     // 새 비밀번호, 새비밀번호 확인 로직 만들어야함(아직 미구현)
     @PostMapping("/api/v1/findPassword")
-    public ResponseEntity<String> findPwdByAccount(@RequestBody @Valid String account,
-                                                   ChangePwdDto changePwdDto) throws Exception {
-        Optional<Member> findMemberByAccount = memberLoginRepository.findByAccount(account);
+    public ResponseEntity<String> findPwdByAccount(@RequestBody @Valid ChangePwdDto changePwdDto) throws Exception {
+        Optional<Member> findMemberByAccount = memberLoginRepository.findByAccount(changePwdDto.getAccount());
         if (findMemberByAccount.isPresent()) {
-            memberService.changePwd(findMemberByAccount, changePwdDto);
-            return new ResponseEntity<>(changePwdDto.getPassword(), OK);
-        } else throw new IllegalStateException("계정이 존재하지 않습니다.");
+            if (changePwdDto.getPassword().equals(changePwdDto.getCheckPassword())) {
+                memberService.changePwd(findMemberByAccount, changePwdDto);
+                return new ResponseEntity<>(changePwdDto.getPassword(), OK);
+            }
+            else {
+                throw new IllegalStateException("새비밀번호와 새비밀번호 확인이 일치하지 않습니다.");
+                new ResponseEntity<>("새비밀번호와 새비밀번호 확인이 일치하지 않습니다.", NOT_FOUND);
+            }
+        } else {
+            throw new IllegalStateException("계정이 존재하지 않습니다.");
+            new ResponseEntity<>("계정이 존재하지 않습니다.", NOT_FOUND);
+        }
         //log.info("password :" + changePwdDto);
 
     }

@@ -6,9 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ChangePwdDto {
+public class EmailDto {
 
-    private String account;
-    private String password;
-    private String checkPassword;
+    private String email;
 }

@@ -22,4 +22,6 @@ public class CustomUserDetailService implements UserDetailsService {
 
         return new MemberAdapter(member); // 이런식으로 클래스 만들어줘서 넘겨줘야지 Best practice라고 한다. 독립적인 코드.
     }
+
+
 }
