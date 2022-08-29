@@ -1,16 +1,13 @@
 package mbti.mbti_test.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import mbti.mbti_test.domain.*;
-import mbti.mbti_test.repository.MemberRepository;
+import mbti.mbti_test.domain.MbtiList;
+import mbti.mbti_test.domain.Result;
 import mbti.mbti_test.repository.ResultRepository;
-import mbti.mbti_test.repository.WhaleCountRepository;
-import mbti.mbti_test.service.MemberService;
 import mbti.mbti_test.service.ResultService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static mbti.mbti_test.domain.MbtiList.*;
@@ -20,9 +17,7 @@ import static mbti.mbti_test.domain.MbtiList.*;
 @Transactional(readOnly = true)
 public class ResultServiceImpl implements ResultService {
 
-    private final MemberRepository memberRepository;
     private final ResultRepository resultRepository;
-    private final WhaleCountRepository whaleCountRepository;
 
     @Override
     @Transactional

@@ -18,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +27,8 @@ import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.*;
 
 @RequiredArgsConstructor
 @Component
@@ -38,12 +41,7 @@ public class JwtTokenProvider {
 
     private String blackList = "blackList";
 
-    //토큰 유효시간 60분
-    private final long tokenValidTime = 60 * 60 * 1000L; // 1시간만 토큰 유효
-
     private final UserDetailsService userDetailsService;
-
-    private LoginRepositoryDto loginRepositoryDto;
 
     private final RedisService redisService;
 
@@ -68,18 +66,10 @@ public class JwtTokenProvider {
         return refreshToken;
     }
 
-    public boolean checkRefreshToken(String account, String refreshToken) { // refreshToken 유효성 검사
+    public void checkRefreshToken(String account, String refreshToken) { // refreshToken 유효성 검사
         String redisRT = redisService.getValues(account);
-        if(!refreshToken.equals(redisRT))
-            return true; // 토큰 만료
-        return false; // 토큰 존재
-    }
-
-    public boolean checkAccessToken(String accessToken) { // accessToken 유효성 검사
-        String Token = loginRepositoryDto.getAccessToken();
-        if(!Token.equals(accessToken))
-            return true; // 토큰 만료
-        return false; // 토큰 존재
+        if (!refreshToken.equals(redisRT))
+            throw new ResponseStatusException(UNAUTHORIZED); // expired refresh-token : 401 unauthorized, login redirection.
     }
 
     public void logout(String account, String accessToken) {

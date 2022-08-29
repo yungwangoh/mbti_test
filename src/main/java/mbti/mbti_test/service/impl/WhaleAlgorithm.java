@@ -1,12 +1,11 @@
 package mbti.mbti_test.service.impl;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import mbti.mbti_test.domain.WhaleCount;
-import mbti.mbti_test.repository.WhaleCountRepository;
-import mbti.mbti_test.service.WhaleCountService;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.text.DecimalFormat;
 import java.util.List;
