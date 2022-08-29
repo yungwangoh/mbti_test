@@ -1,11 +1,10 @@
 package mbti.mbti_test.config.security.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mbti.mbti_test.config.security.user.MemberLoginRepository;
+import mbti.mbti_test.domain.Member;
 import mbti.mbti_test.dto.LoginRepositoryDto;
 import mbti.mbti_test.redis.RedisService;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,6 +42,8 @@ public class JwtTokenProvider {
 
     private final UserDetailsService userDetailsService;
 
+    private final MemberLoginRepository memberLoginRepository;
+
     private final RedisService redisService;
 
 
@@ -70,6 +71,17 @@ public class JwtTokenProvider {
         String redisRT = redisService.getValues(account);
         if (!refreshToken.equals(redisRT))
             throw new ResponseStatusException(UNAUTHORIZED); // expired refresh-token : 401 unauthorized, login redirection.
+    }
+
+    // 0829 accessToken 만료 확인 -> 리프레쉬 없으면 로그인 리디렉션
+    // 구체적인 설명 : https://kukekyakya.tistory.com/entry/Spring-boot-access-token-refresh-token-%EB%B0%9C%EA%B8%89%EB%B0%9B%EA%B8%B0jwt
+    public boolean checkAccessToken(String accessToken) {
+        try {
+            Jws<Claims> claimsJws = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(accessToken);
+            return claimsJws.getBody().getExpiration().before(new Date());
+        } catch (ExpiredJwtException e) {
+            return true;
+        }
     }
 
     public void logout(String account, String accessToken) {
@@ -100,6 +112,7 @@ public class JwtTokenProvider {
     }
 
     //토큰에서 회원 정보 추출
+    // return : account
     public String getMemberPk(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
@@ -123,7 +136,7 @@ public class JwtTokenProvider {
         }
     }
 
-    // 토큰 만료시간 구하기
+    // 엑세스 토큰 만료시간 구하기
     private Date getExpiredTime(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getExpiration();
     }

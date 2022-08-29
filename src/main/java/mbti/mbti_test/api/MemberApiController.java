@@ -141,9 +141,9 @@ public class MemberApiController {
     public LoginRepositoryDto loginV5(@RequestBody @Valid UserLoginDto userLoginDto) {
 
         Member member = memberLoginRepository.findByAccount(userLoginDto.getAccount())
-                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 ACCOUNT 입니다."));
+                .orElseThrow(() -> new IllegalStateException("가입되지 않은 ACCOUNT 입니다."));
         if(!passwordEncoder.matches(userLoginDto.getPassword(), member.getPassword()))
-            throw new IllegalArgumentException("잘못된 비밀번호입니다.");
+            throw new IllegalStateException("잘못된 비밀번호입니다.");
 
         String accessToken = jwtTokenProvider.createAccessToken(member.getAccount(), member.getRoles());
         String refreshToken = jwtTokenProvider.createRefreshToken(member.getAccount(), member.getRoles());
