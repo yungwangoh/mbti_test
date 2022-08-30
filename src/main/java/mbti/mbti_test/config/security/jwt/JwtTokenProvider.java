@@ -55,7 +55,7 @@ public class JwtTokenProvider {
 
     // access token 생성
     public String createAccessToken(String account, List<String> userRole) {
-        Long tokenInvalidTime = 1000L * 60 * 3; // Hayoon 30분
+        Long tokenInvalidTime = 1000L * 60 * 30; // Hayoon 30분
         return this.createToken(account, userRole, tokenInvalidTime);
     }
 
