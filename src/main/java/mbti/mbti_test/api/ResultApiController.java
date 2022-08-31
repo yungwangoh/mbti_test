@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import mbti.mbti_test.config.security.jwt.JwtTokenProvider;
 import mbti.mbti_test.config.security.user.MemberLoginRepository;
+import mbti.mbti_test.config.security.user.ResultCountRepository;
 import mbti.mbti_test.domain.Member;
 import mbti.mbti_test.domain.Result;
 import mbti.mbti_test.domain.WhaleCount;
@@ -34,6 +35,7 @@ public class ResultApiController {
 
     private final WhaleAlgorithm whaleAlgorithm;
     private final JwtTokenProvider jwtTokenProvider;
+    private final ResultCountRepository resultCountRepository;
 
     @GetMapping("/api/v2/result")
     public List<CreateResultDto> resultV2() {
@@ -51,6 +53,11 @@ public class ResultApiController {
         return results.stream()
                 .map(result -> new CreateResultDto(result))
                 .collect(toList());
+    }
+
+    @GetMapping("/api/result/count")
+    public long resultCount() {
+        return resultCountRepository.count();
     }
 
     @PostMapping("/api/algorithm/result")
