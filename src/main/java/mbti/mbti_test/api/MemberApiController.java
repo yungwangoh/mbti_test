@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
-//0803 hayoon
+//0803 Hayoon
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -50,17 +50,15 @@ public class MemberApiController {
     private final StringRedisTemplate redisTemplate;
 
     private final AccessService accessService;
-    private Long tokenInvalidTime = 1000L * 60 * 60; // 토큰 1시간
+    private final Long tokenInvalidTime = 1000L * 60 * 60; // 토큰 1시간
 
     @GetMapping("/api/v2/members")
     public List<CreateMemberDto> memberV2() {
         List<Member> members = memberService.findMembers();
 
-        List<CreateMemberDto> createMemberDtos = members.stream()
+        return members.stream()
                 .map(member -> new CreateMemberDto(member))
                 .collect(Collectors.toList());
-
-        return createMemberDtos;
     }
 
     @Data
@@ -95,8 +93,6 @@ public class MemberApiController {
         "email": "abcd1234@naver.com",
         "name": "AAA"
         }
-     * @param userDto
-     * @return
      */
 
     //로그인
@@ -196,12 +192,9 @@ public class MemberApiController {
     public ResponseEntity<String> findAccountByEmail(@RequestBody @Valid EmailDto emailDto) {
         Optional<Member> findMemberByEmail = memberLoginRepository.findByEmail(emailDto.getEmail());
         log.info("이메일: " + findMemberByEmail.get().getAccount());
-        if (findMemberByEmail.isPresent())
-            return new ResponseEntity<>(findMemberByEmail.get().getAccount(), OK);
-        else {
-            //throw new IllegalStateException("이메일이 존재하지 않습니다.");
-            return new ResponseEntity<>("이메일이 존재하지 않습니다", NOT_FOUND);
-        }
+        //throw new IllegalStateException("이메일이 존재하지 않습니다.");
+        return findMemberByEmail.map(member -> new ResponseEntity<>(member.getAccount(), OK)).
+                orElseGet(() -> new ResponseEntity<>("이메일이 존재하지 않습니다", NOT_FOUND));
     }
 
     //0823 Hayoon
