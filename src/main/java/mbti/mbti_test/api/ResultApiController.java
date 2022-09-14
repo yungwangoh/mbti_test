@@ -15,6 +15,7 @@ import mbti.mbti_test.dto.CreateWhaleCountDto;
 import mbti.mbti_test.service.ResultService;
 import mbti.mbti_test.service.WhaleCountService;
 import mbti.mbti_test.service.impl.WhaleAlgorithm;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -120,9 +121,11 @@ public class ResultApiController {
     }
 
     @PostMapping("/api/create/non-user/result") // 비회원 결과 저장
-    public void saveResultV2NonUser(@RequestBody @Valid CreateWhaleCountDto createWhaleCountDto) {
+    public Long saveResultV2NonUser(@RequestBody @Valid CreateWhaleCountDto createWhaleCountDto) {
         WhaleCount whaleNameMbti = whaleCountService.findWhaleNameMbti(createWhaleCountDto.getWhaleName());
         whaleNameMbti.whaleCountValue();
+
+        return whaleCountService.whaleJoin(whaleNameMbti);
     }
 
     @Data
