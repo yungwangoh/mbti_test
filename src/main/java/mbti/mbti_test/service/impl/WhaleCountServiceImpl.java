@@ -6,6 +6,7 @@ import mbti.mbti_test.domain.WhaleCount;
 import mbti.mbti_test.repository.WhaleCountRepository;
 import mbti.mbti_test.service.WhaleCountService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,6 +20,7 @@ public class WhaleCountServiceImpl implements WhaleCountService {
     private final WhaleCountRepository whaleCountRepository;
 
     @Override
+    @Transactional
     public Long whaleJoin(WhaleCount whaleCount) {
         whaleCountRepository.save(whaleCount);
         return whaleCount.getId();
