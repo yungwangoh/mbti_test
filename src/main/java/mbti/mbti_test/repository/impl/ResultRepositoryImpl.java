@@ -36,9 +36,9 @@ public class ResultRepositoryImpl implements ResultRepository {
     public List<Result> findMemberResult(Long memberId) { // 페이징 처리? -> 최적화...
         return em.createQuery("select r from Result r " +
                         " join fetch r.whaleCount" +
-                        " join fetch r.member m where m.id = :memberId", Result.class)
+                        " join fetch r.member m where m.id = :memberId order by r.id desc", Result.class)
                 .setFirstResult(0)
-                .setMaxResults(10)
+                .setMaxResults(5)
                 .setParameter("memberId", memberId)
                 .getResultList();
     }

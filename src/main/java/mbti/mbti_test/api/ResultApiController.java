@@ -124,6 +124,7 @@ public class ResultApiController {
     public Long saveResultV2NonUser(@RequestBody @Valid CreateWhaleCountDto createWhaleCountDto) {
         WhaleCount whaleNameMbti = whaleCountService.findWhaleNameMbti(createWhaleCountDto.getWhaleName());
         whaleNameMbti.whaleCountValue();
+        whaleAlgorithm.AllSharePoints(whaleCountService.findAll());
 
         return whaleCountService.whaleJoin(whaleNameMbti);
     }
