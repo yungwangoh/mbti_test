@@ -1,3 +1,6 @@
+#server:
+#  address: 43.200.94.144
+#  port: 8080
 spring:
   redis:
     lettuce:
