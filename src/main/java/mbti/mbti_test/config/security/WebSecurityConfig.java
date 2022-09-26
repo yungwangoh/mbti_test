@@ -70,6 +70,9 @@ public class WebSecurityConfig {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
 
         corsConfiguration.addAllowedOrigin("http://43.200.94.144:80");
+        corsConfiguration.addAllowedOrigin("http://43.200.94.144:3000");
+        corsConfiguration.addAllowedOrigin("http://corals.kr:80");
+        corsConfiguration.addAllowedOrigin("http://corals.kr:3000");
         corsConfiguration.addAllowedHeader("*");
         corsConfiguration.addAllowedMethod("*");
         corsConfiguration.setAllowCredentials(true);
