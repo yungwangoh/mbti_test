@@ -7,6 +7,8 @@ import lombok.Setter;
 
 import javax.persistence.Embeddable;
 
+//숨겨진 주소
+
 @Embeddable
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
